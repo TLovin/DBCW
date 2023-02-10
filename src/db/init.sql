@@ -5,6 +5,12 @@ CREATE TABLE movies (
     yearr INT NOT NULL,
     PRIMARY KEY (movieId)
 );
+LOAD DATA INFILE 'ml-latest-small/movies.csv' 
+INTO TABLE movies
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
 
 CREATE TABLE links (
     movieId INT NOT NULL AUTO_INCREMENT,
@@ -12,6 +18,12 @@ CREATE TABLE links (
     tmdbId INT NOT NULL,
     PRIMARY KEY (movieId)
 );
+LOAD DATA INFILE 'ml-latest-small/links.csv' 
+INTO TABLE links 
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
 
 CREATE TABLE ratings (
     userId INT NOT NULL,
@@ -20,6 +32,12 @@ CREATE TABLE ratings (
     timestampp INT NOT NULL,
     PRIMARY KEY (userID, movieId)
 );
+LOAD DATA INFILE 'ml-latest-small/ratings.csv' 
+INTO TABLE ratings 
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
 
 CREATE TABLE tags (
     userId INT NOT NULL,
@@ -28,3 +46,9 @@ CREATE TABLE tags (
     timestampp INT NOT NULL,
     PRIMARY KEY (userID, movieId)
 );
+LOAD DATA INFILE 'ml-latest-small/tags.csv' 
+INTO TABLE tags
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
