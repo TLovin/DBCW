@@ -1,4 +1,4 @@
-CREATE TABLE movies (
+CREATE TABLE movie_db.movies (
     movieId INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     genre VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-CREATE TABLE links (
+CREATE TABLE movie_db.links (
     movieId INT NOT NULL AUTO_INCREMENT,
     imdbId INT NOT NULL,
     tmdbId INT NOT NULL,
@@ -25,7 +25,7 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-CREATE TABLE ratings (
+CREATE TABLE movie_db.ratings (
     userId INT NOT NULL,
     movieId INT NOT NULL,
     rating FLOAT NOT NULL,
@@ -39,7 +39,7 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-CREATE TABLE tags (
+CREATE TABLE movie_db.tags (
     userId INT NOT NULL,
     movieId INT NOT NULL,
     tag VARCHAR(255) NOT NULL,

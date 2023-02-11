@@ -23,15 +23,14 @@ services:
   db:
     image: mysql:latest
     environment:
-      - MYSQL_DATABASE=whatever  # name of database to create
+      - MYSQL_DATABASE=movie_db  # name of database to create
       - MYSQL_ROOT_PASSWORD=password  # log into localhost:8077 with credentials: "root" and "password"
       - MYSQL_USER=user1  # more credentials
       - MYSQL_PASSWORD=password
     volumes:
-      - ./db:/tmp/db/  # sql code does in ./db
+      - ./db:/docker-entrypoint-initdb.d  # sql code does in ./db
     ports:
       - "3306:3306"
-    command: mysqld --init-file="/tmp/db/init.sql"
 
   phpmyadmin:
     depends_on:  # ensures this container is created after the mysql container
