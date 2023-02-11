@@ -1,0 +1,52 @@
+version: "3"
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile  # nginx is defined in this Dockerfile with a special config to connect it to php
+    ports: 
+      - "8080:80"
+    networks:  # private network to link nginx to the php container
+      - internal
+    volumes:
+      - ./app/:/var/www/html/  # code for website goes in ./app directory
+      - ./logs/nginx:/var/log/nginx/
+
+  php:
+    image: php:fpm-alpine
+    networks:  # private network to link php to the nginx container
+      - internal
+    volumes:
+      - ./app/:/var/www/html/  #  ode for website goes in ./app directory
+      - ./logs/php.log:/var/log/fpm-php.www.log
+
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=whatever  # name of database to create
+      - MYSQL_ROOT_PASSWORD=password  # log into localhost:8077 with credentials: "root" and "password"
+      - MYSQL_USER=user1  # more credentials
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./db:/tmp/db/  # sql code does in ./db
+    ports:
+      - "3306:3306"
+    command: mysqld --init-file="/tmp/db/init.sql"
+
+  phpmyadmin:
+    depends_on:  # ensures this container is created after the mysql container
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8077:80'
+    environment:  # not sure what these vars are
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: password
+    links:
+        - db
+  
+networks:
+  internal:
+    driver: bridge
