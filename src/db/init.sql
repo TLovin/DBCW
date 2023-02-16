@@ -12,20 +12,6 @@ CREATE TABLE movie_db.links (
     PRIMARY KEY (movieId)
 );
 
-
-
--- LOAD DATA INFILE '../secure_file_priv/links.csv'
--- INTO TABLE links
--- FIELDS TERMINATED BY ','
--- IGNORE 1 ROWS;
-
--- LOAD DATA INFILE '../secure_file_priv/links.csv' 
--- INTO TABLE movies_db.links 
--- FIELDS TERMINATED BY ',' 
--- ENCLOSED BY '"'
--- LINES TERMINATED BY '\n'
--- IGNORE 1 ROWS;
-
 CREATE TABLE movie_db.ratings (
     userId INT NOT NULL,
     movieId INT NOT NULL,
@@ -33,12 +19,7 @@ CREATE TABLE movie_db.ratings (
     timestampp INT NOT NULL,
     PRIMARY KEY (userID, movieId)
 );
--- LOAD DATA INFILE 'ml-latest-small/ratings.csv' 
--- INTO TABLE ratings 
--- FIELDS TERMINATED BY ',' 
--- ENCLOSED BY '"'
--- LINES TERMINATED BY '\n'
--- IGNORE 1 ROWS;
+
 
 CREATE TEMPORARY TABLE movie_db.tags (
     userId INT NOT NULL ,
@@ -48,12 +29,7 @@ CREATE TEMPORARY TABLE movie_db.tags (
     tagIndex INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (tagIndex)
 );
--- LOAD DATA INFILE 'ml-latest-small/tags.csv' 
--- INTO TABLE tags
--- FIELDS TERMINATED BY ',' 
--- ENCLOSED BY '"'
--- LINES TERMINATED BY '\n'
--- IGNORE 1 ROWS;
+
 
 
 SHOW VARIABLES LIKE "secure_file_priv";
@@ -101,7 +77,7 @@ CREATE TABLE movie_db.tagCollection (
   tag VARCHAR(255) NOT NULL,
   PRIMARY KEY (tagIndex)
 );
-
+#new tables for tags 
 INSERT INTO movie_db.tagData (userId, movieId,timestampp,tagIndex)
 SELECT userId, movieId,timestampp,tagIndex
 FROM movie_db.tags;
