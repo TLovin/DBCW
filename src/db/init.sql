@@ -5,8 +5,9 @@ CREATE TABLE movie_db.movies (
     -- yearr INT NOT NULL,
     PRIMARY KEY (movieId)
 );
+
 CREATE TABLE movie_db.links (
-    movieId INT NOT NULL AUTO_INCREMENT,
+    movieId INT NOT NULL,
     imdbId INT NOT NULL,
     tmdbId INT NOT NULL,
     PRIMARY KEY (movieId)
@@ -20,19 +21,15 @@ CREATE TABLE movie_db.ratings (
     PRIMARY KEY (userID, movieId)
 );
 
-
-CREATE TEMPORARY TABLE movie_db.tags (
-    userId INT NOT NULL ,
+CREATE TABLE movie_db.tags (
+    userId INT NOT NULL,
     movieId INT NOT NULL,
     tag VARCHAR(255) NOT NULL,
     timestampp INT NOT NULL,
-    tagIndex INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (tagIndex)
+    -- tagIndex INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (userId,movieId,tag,timestampp)
 );
 
-
-
-SHOW VARIABLES LIKE "secure_file_priv";
 
 LOAD DATA INFILE '../../movies.csv' 
 INTO TABLE movie_db.movies
@@ -61,27 +58,3 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
-
-CREATE TABLE movie_db.tagData (
-  userId INT NOT NULL,
-  movieId INT NOT NULL,
-  tagIndex INT NOT NULL ,
-  timestampp INT NOT NULL,
-  PRIMARY KEY (userId,movieId,tagIndex)
-
-);
-
-CREATE TABLE movie_db.tagCollection (
-  tagIndex INT NOT NULL AUTO_INCREMENT,
-  tag VARCHAR(255) NOT NULL,
-  PRIMARY KEY (tagIndex)
-);
-#new tables for tags 
-INSERT INTO movie_db.tagData (userId, movieId,timestampp,tagIndex)
-SELECT userId, movieId,timestampp,tagIndex
-FROM movie_db.tags;
-
-INSERT INTO movie_db.tagCollection (tag,tagIndex)
-SELECT tag,tagIndex
-FROM movie_db.tags;
