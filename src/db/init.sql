@@ -17,7 +17,7 @@ CREATE TABLE movie_db.ratings (
     userId INT NOT NULL,
     movieId INT NOT NULL,
     rating FLOAT NOT NULL,
-    timestampp INT NOT NULL,
+    `timestamp` INT NOT NULL,
     PRIMARY KEY (userID, movieId)
 );
 
@@ -25,9 +25,9 @@ CREATE TABLE movie_db.tags (
     userId INT NOT NULL,
     movieId INT NOT NULL,
     tag VARCHAR(255) NOT NULL,
-    timestampp INT NOT NULL,
+    `timestamp` INT NOT NULL,
     -- tagIndex INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (userId,movieId,tag,timestampp)
+    PRIMARY KEY (userId,movieId,tag,`timestamp`)
 );
 
 
