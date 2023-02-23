@@ -21,10 +21,10 @@ ADD `year` INT;
 UPDATE movies
 SET `year` =
   CASE 
-    WHEN REPLACE(SUBSTRING_INDEX(title, '(', -1), ')', '') REGEXP '^[0-9][0-9][0-9][0-9]$' THEN REPLACE(SUBSTRING_INDEX(title, '(', -1), ')', '')
+    WHEN TRIM(REPLACE(SUBSTRING_INDEX(title, '(', -1), ')', '')) REGEXP '^[0-9][0-9][0-9][0-9]$' THEN REPLACE(SUBSTRING_INDEX(title, '(', -1), ')', '')
       ELSE NULL
   END,
-title = SUBSTRING_INDEX(title, '(', 1);
+title = TRIM(SUBSTRING_INDEX(title, '(', 1));
 
 -- Populate tables
 -- Users
