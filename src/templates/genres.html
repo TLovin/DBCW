@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SQL Data</title>
+  </head>
+  <body>
+    <h1>Welcome to our SQL Database to do with Movies</h1>
+    <h3>Displaying: {{name }} Table</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>GenreID</th>
+          <th>Genre</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data%}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+        </tr>
+        {%endfor%}
+      </tbody>
+    </table>
+  </body>
+</html>
