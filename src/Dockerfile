@@ -1,5 +1,5 @@
 # start by pulling the python image
-FROM python:3.9-slim-buster
+FROM python:latest
 
 # RUN apt-get update && \
 #     apt-get install -y default-libmysqlclient-dev && \
