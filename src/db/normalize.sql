@@ -26,6 +26,11 @@ SET `year` =
   END,
 title = TRIM(SUBSTRING_INDEX(title, '(', 1));
 
+#updating the title
+UPDATE  movie_db.movies 
+SET title = LTRIM(CONCAT(SUBSTRING_INDEX(title, ',', -1), ' ', SUBSTRING_INDEX(title, ',', 1))) WHERE title LIKE '%,%';
+
+
 -- Populate tables
 -- Users
 INSERT INTO movie_db.users (userId)

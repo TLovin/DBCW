@@ -57,6 +57,7 @@ services:
       - ../ml-latest-small/links.csv:/var/links.csv
       - ../ml-latest-small/ratings.csv:/var/ratings.csv
       - ../ml-latest-small/tags.csv:/var/tags.csv
+      - ../ml-latest-small/rotten.csv:/var/rotten.csv
       # - db_data:/var/lib/mysql
     ports:
       - "3306:3306"

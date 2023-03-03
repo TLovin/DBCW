@@ -95,6 +95,25 @@ def tags():
     return render_template('tags.html', data=value, name='Tags')
 
 
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
+
+@app.route('/search_results', methods=['POST'])
+def search_results():
+    # Get search term from the form
+    search_term = request.form['search']
+    cur = mysql.connection.cursor()
+    # Execute the search query
+    query = "SELECT * FROM rotten WHERE title = %s"
+    #cur.execute(f"SELECT * FROM rotten WHERE title = '{search_term}'")
+    cur.execute(query, (search_term,))
+    results = cur.fetchall()
+
+    return render_template('search_results.html', results=results)
+
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
