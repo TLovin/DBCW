@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SQL Data</title>
+  </head>
+  <body class="container">
+    <h1>Welcome to our SQL Database to do with Movies</h1>
+    <h3>Searching for Title+Date or Genre:</h3>
+    <p>If you want to search by Title+Date, then type the title of the movie then a "," and then the year of the movie and then select "Title+Year" from the drop down.</p>
+    <p>If you want to search by Year, then type in the year to search for and then select "Year" from the drop down.</p>
+    <p>If you want to search by Genre, then type in the genre to search for and then select "Genre" from the drop down.</p>
+    <form action="/search_results_1" method="POST">
+      <input type="text" name="search_1">
+      <select name="search_options" id="search_options">
+        <option value="titledate">Title+Year</option>
+        <option value="year">Year</option>
+        <option value="genre">Genre</option>
+      </select>
+      <button type="submit">Search</button>
+    </form>
+<br>
+<br>
+    <h3>Finding Most/Least Popular Movie:</h3>
+    <p>Please type in the Genre, Year and whether you want to see most/least popular movies from the drop down.</p>
+    <form action="/search_results_2" method="POST">
+      <label for="genresearch">Genre:</label>
+      <input type="text" name="genresearch">
+      <label for="yearsearch">Year:</label>
+      <input type="text" name="yearsearch">
+      <select name="mostleast" id="mostleast">
+        <option value="mostpopular">Most Popular</option>
+        <option value="leastpopular">Least Popular</option>
+      </select>
+      <button type="submit">Search</button>
+    </form>
+  </body>
+</html>

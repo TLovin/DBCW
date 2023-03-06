@@ -99,6 +99,10 @@ def tags():
 def search():
     return render_template('search.html')
 
+@app.route('/search_1')
+def search_1():
+    return render_template('search_1.html')
+
 
 @app.route('/search_results', methods=['POST'])
 def search_results():
@@ -112,6 +116,44 @@ def search_results():
     results = cur.fetchall()
 
     return render_template('search_results.html', results=results)
+
+@app.route('/search_results_1', methods=['POST'])
+def search_results_1():
+    # Get search term from the form
+    search_term = request.form['search_1']
+    search_term_option = request.form['search_options']
+    cur = mysql.connection.cursor()
+    if search_term_option == "titledate":
+        search_term_split = search_term.split(",")
+        query = "SELECT DISTINCT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.title=%s AND movies.year = %s GROUP BY genres.type"
+        cur.execute(query, (search_term_split[0],search_term_split[1],))
+    elif search_term_option == "year":
+        query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.year=%s GROUP BY movies.title"
+        cur.execute(query, (search_term,))
+    elif search_term_option == "genre":
+        query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s GROUP BY movies.title"
+        cur.execute(query, (search_term,))
+
+    results = cur.fetchall()
+
+    return render_template('search_results_1.html', results=results)
+
+@app.route('/search_results_2', methods=['POST'])
+def search_results_2():
+    genre_search_term = request.form['genresearch']
+    year_search_term = request.form['yearsearch']
+    search_term_option = request.form['mostleast']
+    cur = mysql.connection.cursor()
+    if search_term_option == "mostpopular":
+        query = "SELECT COUNT(ratings.userId), movies.movieId, movies.title, movies.year, genres.type FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND movies.year >= %s GROUP BY movies.title ORDER BY COUNT(ratings.userId) DESC;"
+        cur.execute(query, (genre_search_term,year_search_term,))
+    elif search_term_option == "leastpopular":
+        query = "SELECT DISTINCT COUNT(ratings.userId), movies.movieId, movies.title, movies.year, genres.type FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND movies.year >= %s GROUP BY movies.title ORDER BY COUNT(ratings.userId) ASC;"
+        cur.execute(query, (genre_search_term,year_search_term,))
+        
+    results = cur.fetchall()
+
+    return render_template('search_results_2.html', results=results)
 
 
 if __name__ == "__main__":
