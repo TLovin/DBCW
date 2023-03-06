@@ -2,16 +2,58 @@
 <html>
   <head>
     <title>Search Results</title>
+    <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+        
+        <meta name="description" content="">
+      
+        <link rel="stylesheet" href="../static/production.css">
+
+      
+        <link href="https://fonts.googleapis.com/css?family=Cabin:400,700|Playfair+Display:900" rel="stylesheet">
+
+
+
   </head>
   <body>
-    {% if results %}
-      <ul>
-        {% for result in results %}
-          <li>{{ result }}</li>
-        {% endfor %}
-      </ul>
+    {% if movie_title %}
+    <div class="grid-row container ">
+        <div style="background:rgba(0,0,0,0) no-repeat scroll center center/cover " class="image-container">
+            <img src="{{image}}">
+        </div>
+      
+        <div class="body full-width pt1 pr2 pb2 pl2 text-container">
+            
+            <nav class="navigation border--bottom pt1">
+                <ul class="no-bullets list--inline pb1 bold">
+                    <li class="small mr2"><a class="link link--text current" href="/">Movie Details</a></li>
+                </ul>
+            </nav>
+            
+            <main class="content pt2 pb2">
+                <h2>{{movie_title}}</h2>
+                <p style="font-size: small;"> {{description}}</p>
+                <h3>Director</h3>
+                <p style="font-size: small;"> {{director}}</p>
+                <h3>Writer</h3>
+                <p style="font-size: small;"> {{writer}} </p>
+                <h3>Cast</h3>
+                <p style="font-size: small;"> {{cast}}</p>
+                <h4>Tomatorer rating: {{rating}}</h4>
+                
+            </main>
+            
+        
+        </div>
+        
+    </div>
+
     {% else %}
       <p>No results found.</p>
     {% endif %}
+
+
   </body>
 </html>

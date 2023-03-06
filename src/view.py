@@ -106,7 +106,7 @@ def search_1():
 
 @app.route('/search_results', methods=['POST'])
 def search_results():
-    # Get search term from the form
+     # Get search term from the form
     search_term = request.form['search']
     cur = mysql.connection.cursor()
     # Execute the search query
@@ -114,8 +114,9 @@ def search_results():
     #cur.execute(f"SELECT * FROM rotten WHERE title = '{search_term}'")
     cur.execute(query, (search_term,))
     results = cur.fetchall()
-
-    return render_template('search_results.html', results=results)
+   
+    movie_title, description, image,director,writer,cast,rating=results[0]
+    return render_template('search_results.html', movie_title=movie_title,description=description, image=image,director=director,writer=writer,cast=cast,rating=rating)
 
 @app.route('/search_results_1', methods=['POST'])
 def search_results_1():
@@ -155,6 +156,26 @@ def search_results_2():
 
     return render_template('search_results_2.html', results=results)
 
+@app.route('/search2')
+def search2():
+    return render_template('search2.html')
+
+
+@app.route('/task5', methods=['POST'])
+def task5():
+    # Get search term from the form
+    search_term = request.form['search']
+    cur = mysql.connection.cursor()
+    # Execute the search query
+    query1 = "SELECT AVG(rating) FROM (SELECT *, @counter := @counter +1 AS counter FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s ORDER BY movie_db.ratings.timestamp ASC) as list, (select @counter:=0) AS initvar) AS X where counter <= (ROUND(25/100 * (SELECT COUNT( DISTINCT userId, timestamp) as movies FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s))) ORDER BY X.timestamp ASC"
+    query2 = "SELECT AVG(rating) FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s) as selected"
+    #cur.execute(f"SELECT * FROM rotten WHERE title = '{search_term}'")
+    cur.execute(query1, (search_term,search_term))
+    result1 = cur.fetchall() 
+    cur.execute(query2, (search_term,))
+    result2 = cur.fetchall()
+    results = [result1[0], result2[0]]
+    return render_template('task5.html', results=results)
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
