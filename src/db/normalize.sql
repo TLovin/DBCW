@@ -77,3 +77,5 @@ ORDER BY 1, 2;
 
 ALTER TABLE movie_db.movies
 DROP genre;
+
+UPDATE tags SET tag = LOWER(tag);

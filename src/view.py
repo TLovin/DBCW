@@ -177,6 +177,105 @@ def task5():
     results = [result1[0], result2[0]]
     return render_template('task5.html', results=results)
 
+
+@app.route('/tag_analysis')
+def tag_analysis():
+    return render_template('tag_analysis.html')
+
+
+@app.route('/tag_analysis_results_by_genre', methods=['POST'])
+def tag_analysis_results_by_genre():
+    # Get search term from the form
+    selected_genre = request.form['genre_option']
+    cur = mysql.connection.cursor()
+    query = '''WITH temp AS (
+        SELECT lower(t.tag) as tag, g.`type` as genre
+        FROM movie_db.tags t
+        JOIN movie_db.moviegenres m
+        ON t.movieId = m.movieId
+        JOIN movie_db.genres g
+        ON m.genreId = g.genreId
+        ORDER BY 2, 1
+        )
+        SELECT tag, count(tag) as frequency
+        FROM temp
+        WHERE genre = %s
+        GROUP BY tag
+        ORDER BY 2 DESC, 1'''
+    cur.execute(query, (selected_genre,))
+    results = cur.fetchall()
+
+    return render_template('tag_analysis_results_by_genre.html', results=results, selected_genre=selected_genre)
+
+
+@app.route('/tag_analysis_results_by_rating', methods=['POST'])
+def tag_analysis_results_by_rating():
+    num_tags = request.form['num_tags']
+    cur = mysql.connection.cursor()
+    query = '''WITH temp AS (
+        SELECT 
+            lower(t.tag) AS tag, 
+            count(lower(t.tag)) AS `count`, 
+            r.rating
+        FROM tags t
+        left JOIN ratings r
+        ON t.movieId = r.movieId
+        GROUP BY 1, 3
+        ORDER BY rating DESC, `count` DESC
+        )
+        SELECT tag, `count`, rating
+        FROM 
+            (SELECT 
+            *, 
+            row_number() OVER (Partition BY rating ORDER BY `count` DESC) AS rnum
+            FROM temp) t
+        WHERE rnum <= %s
+        ORDER BY 3 DESC, 2 DESC'''
+    cur.execute(query, (num_tags,))
+    results = cur.fetchall()
+
+    return render_template('tag_analysis_results_by_rating.html', results=results, num_tags=num_tags)
+
+
+@app.route('/tag_analysis_results_by_user', methods=['POST'])
+def tag_analysis_results_by_user():
+    selected_genre = request.form['selected_tag']
+    cur = mysql.connection.cursor()
+    query = '''WITH temp as (
+        SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
+        FROM movie_db.tags 
+        GROUP BY lower(tag)  
+        ORDER BY cnt DESC
+        )
+        SELECT userId, lower(tags.tag) as tag, count(*) as `count`, cnt as `total count`
+        FROM tags
+        JOIN temp
+        ON tags.tag = temp.tag
+        WHERE temp.tag = %s
+        group by userId, lower(tag)
+        order by 3 DESC, 2'''
+
+    query_no_tag = '''WITH temp as (
+        SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
+        FROM movie_db.tags 
+        GROUP BY lower(tag)  
+        ORDER BY cnt DESC
+        )
+        SELECT userId, lower(tags.tag) as tag, count(*) as `count`, cnt as `total count`
+        FROM tags
+        JOIN temp
+        ON tags.tag = temp.tag
+        group by userId, lower(tag)
+        order by 3 DESC, 2'''
+    if selected_genre:
+        cur.execute(query, (selected_genre,))
+    else:
+        cur.execute(query_no_tag)
+    results = cur.fetchall()
+
+    return render_template('tag_analysis_results_by_user.html', results=results)
+
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
