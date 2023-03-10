@@ -95,28 +95,26 @@ def tags():
     return render_template('tags.html', data=value, name='Tags')
 
 
-@app.route('/search')
+@app.route('/rotten_tomato_search')
 def search():
-    return render_template('search.html')
+    return render_template('rotten_tomato_search.html')
 
 @app.route('/search_1')
 def search_1():
     return render_template('search_1.html')
 
 
-@app.route('/search_results', methods=['POST'])
+@app.route('/rotten_tomato_search_results', methods=['POST'])
 def search_results():
      # Get search term from the form
     search_term = request.form['search']
     cur = mysql.connection.cursor()
     # Execute the search query
-    query = "SELECT * FROM rotten WHERE title = %s"
-    #cur.execute(f"SELECT * FROM rotten WHERE title = '{search_term}'")
+    query = "SELECT m.* ,GROUP_CONCAT(DISTINCT d.name SEPARATOR ', ') AS directors,GROUP_CONCAT(DISTINCT w.name SEPARATOR ', ') AS writers, GROUP_CONCAT(DISTINCT c.name SEPARATOR ', ') AS cast FROM movie_db.rotten m JOIN movie_db.movie_director md ON m.movieId = md.movie_id JOIN movie_db.directors d ON md.director_id = d.id JOIN movie_db.movie_writer mw ON m.movieId = mw.movie_id JOIN movie_db.writers w ON mw.writer_id = w.id JOIN movie_db.movie_cast mc ON m.movieId = mc.movie_id JOIN movie_db.casts c ON mc.cast_id = c.id WHERE m.title =  %s"
     cur.execute(query, (search_term,))
     results = cur.fetchall()
-   
-    movie_title, description, image,director,writer,cast,rating=results[0]
-    return render_template('search_results.html', movie_title=movie_title,description=description, image=image,director=director,writer=writer,cast=cast,rating=rating)
+    movie_title, movieId, description, image,rating,director,writer,cast=results[0]
+    return render_template('rotten_tomato_search_results.html', movie_title=movie_title,description=description, image=image,director=director,writer=writer,cast=cast,rating=rating)
 
 @app.route('/search_results_1', methods=['POST'])
 def search_results_1():
