@@ -19,7 +19,7 @@ CREATE TEMPORARY TABLE movie_db.rottenTomatoRating(
     PRIMARY KEY (rotten_tomatoes_link)
 );
 
-LOAD DATA INFILE '../../rotten.csv'
+LOAD DATA INFILE '../../ml-latest-small/rotten.csv'
 INTO TABLE movie_db.rottenTomatoRating
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"'

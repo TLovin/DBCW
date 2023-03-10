@@ -79,3 +79,28 @@ ALTER TABLE movie_db.movies
 DROP genre;
 
 UPDATE tags SET tag = LOWER(tag);
+
+-- Integrate personality tables into the database
+ALTER TABLE movie_db.users
+ADD openness VARCHAR(255),
+ADD agreeableness VARCHAR(255),
+ADD emotional_stability VARCHAR(255),
+ADD conscientiousness VARCHAR(255),
+ADD extraversion VARCHAR(255),
+ADD personality_userId VARCHAR(255);
+
+INSERT INTO movie_db.users (personality_userId, openness, agreeableness, emotional_stability, conscientiousness, extraversion)
+SELECT * 
+FROM movie_db.user_personalities;
+
+INSERT INTO movie_db.ratings
+SELECT u.userId, movieId, rating, UNIX_TIMESTAMP(`timestamp`) as `timestamp`
+FROM movie_db.ratings_personality r
+LEFT JOIN movie_db.users u
+ON r.userId = u.personality_userId;
+
+ALTER TABLE movie_db.users
+DROP personality_userId;
+
+DROP TABLE movie_db.ratings_personality;
+DROP TABLE movie_db.user_personalities;

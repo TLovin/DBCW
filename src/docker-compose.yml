@@ -53,12 +53,13 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d  # sql code does in ./db
       - ../my.cnf:/etc/mysql/my.cnf:ro
-      - ../ml-latest-small/movies.csv:/var/movies.csv
-      - ../ml-latest-small/links.csv:/var/links.csv
-      - ../ml-latest-small/ratings.csv:/var/ratings.csv
-      - ../ml-latest-small/tags.csv:/var/tags.csv
-      - ../ml-latest-small/rotten.csv:/var/rotten.csv
-      # - db_data:/var/lib/mysql
+      - ../ml-latest-small/movies.csv:/var/ml-latest-small/movies.csv
+      - ../ml-latest-small/links.csv:/var/ml-latest-small/links.csv
+      - ../ml-latest-small/ratings.csv:/var/ml-latest-small/ratings.csv
+      - ../ml-latest-small/tags.csv:/var/ml-latest-small/tags.csv
+      - ../ml-latest-small/rotten.csv:/var/ml-latest-small/rotten.csv
+      - ../personality-isf2018/personality-data.csv:/var/personality-isf2018/personality-data.csv
+      - ../personality-isf2018/ratings.csv:/var/personality-isf2018/ratings.csv
     ports:
       - "3306:3306"
 
