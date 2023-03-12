@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SQL Data</title>
+  </head>
+  <body class="container">
+    <h1>Welcome to our SQL Database to do with Movies</h1>
+    <h3>Analysis of viewer reaction to a film in relation to their rating history:</h3>
+    <p>Please enter the UserId of the User you want to view and the Movie Name.</p>
+    <form action="/viewerReactionPage1" method="POST">
+      <input type="text" name="userid" placeholder="User ID">
+      <input type="text" name="moviename" placeholder="Movie Name">
+      <button type="submit">Search</button>
+    </form>
+
+    <br>
+    <br>
+    <h3>Analysis of viewer ratings by ratings history and genres</h3>
+    <p>Please enter the UserId of the User you want to view, the Movie Name and the genre.</p>
+    <form action="/viewerReactionPage2" method="POST">
+      <input type="text" name="userid" placeholder="User ID">
+      <input type="text" name="moviename" placeholder="Movie Name">
+      <input type="text" name="genrename" placeholder="Genre">
+      <button type="submit">Search</button>
+    </form>
+  </body>
+</html>

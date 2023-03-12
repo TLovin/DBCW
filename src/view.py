@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request
 import os
 from flask_mysqldb import MySQL
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 
@@ -99,11 +102,6 @@ def tags():
 def search():
     return render_template('rotten_tomato_search.html')
 
-@app.route('/search_1')
-def search_1():
-    return render_template('search_1.html')
-
-
 @app.route('/rotten_tomato_search_results', methods=['POST'])
 def search_results():
      # Get search term from the form
@@ -116,8 +114,12 @@ def search_results():
     movie_title, movieId, description, image,rating,director,writer,cast=results[0]
     return render_template('rotten_tomato_search_results.html', movie_title=movie_title,description=description, image=image,director=director,writer=writer,cast=cast,rating=rating)
 
-@app.route('/search_results_1', methods=['POST'])
-def search_results_1():
+@app.route('/search_visual_browsing')
+def search_visual_browsing():
+    return render_template('search_visual_browsing.html')
+
+@app.route('/search_visual_browsing_results', methods=['POST'])
+def search_visual_browsing_results():
     # Get search term from the form
     search_term = request.form['search_1']
     search_term_option = request.form['search_options']
@@ -132,13 +134,11 @@ def search_results_1():
     elif search_term_option == "genre":
         query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s GROUP BY movies.title"
         cur.execute(query, (search_term,))
-
     results = cur.fetchall()
+    return render_template('search_visual_browsing_results.html', results=results)
 
-    return render_template('search_results_1.html', results=results)
-
-@app.route('/search_results_2', methods=['POST'])
-def search_results_2():
+@app.route('/mostleastpopularmovie', methods=['POST'])
+def mostleastpopularmovie():
     genre_search_term = request.form['genresearch']
     year_search_term = request.form['yearsearch']
     search_term_option = request.form['mostleast']
@@ -149,10 +149,130 @@ def search_results_2():
     elif search_term_option == "leastpopular":
         query = "SELECT DISTINCT COUNT(ratings.userId), movies.movieId, movies.title, movies.year, genres.type FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND movies.year >= %s GROUP BY movies.title ORDER BY COUNT(ratings.userId) ASC;"
         cur.execute(query, (genre_search_term,year_search_term,))
-        
     results = cur.fetchall()
+    return render_template('mostleastpopularmovie.html', results=results)
 
-    return render_template('search_results_2.html', results=results)
+def generate_graph(x,y,search_term):
+    plt.bar(x, y)
+
+    # Add labels and title
+    plt.ylabel('Rating')
+    plt.title(f"Bar Chart, showing User {search_term} Rating History")
+    
+    # Save the figure to a buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    
+    # Encode the buffer as a base64 string
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    graph = base64.b64encode(image_png).decode()
+    return graph
+
+@app.route('/analysisOnViewersReaction')
+def analysisOnViewersReaction():
+    return render_template('analysisOnViewersReaction.html')
+
+@app.route('/viewerReactionPage1', methods=['POST'])
+def viewerReactionPage1():
+    # Get search term from the form
+    search_term = request.form['userid']
+    search_term_1 = request.form['moviename']
+    cur = mysql.connection.cursor()
+    query = "SELECT ROUND(AVG(rating),3) FROM `ratings` WHERE userId=%s;"
+    cur.execute(query, (search_term,))
+    results = cur.fetchall()
+    cur.close()
+    
+    cur = mysql.connection.cursor()
+    query1 = "SELECT AVG(rating) FROM `ratings` JOIN movies ON ratings.movieId=movies.movieId WHERE movies.title=%s AND ratings.userId=%s GROUP BY userId;"
+    cur.execute(query1, (search_term_1,search_term,))
+    results1 = cur.fetchall()
+    
+    cur = mysql.connection.cursor()
+    query2 = "SELECT ROUND(AVG(r.rating),3) AS this_movie_rating FROM ratings r INNER JOIN moviegenres mg ON r.movieId = mg.movieId INNER JOIN genres g ON mg.genreId = g.genreId INNER JOIN movies m ON mg.movieId = m.movieId INNER JOIN ratings r2 ON r.userId = r2.userId AND r.movieId != r2.movieId INNER JOIN moviegenres mg2 ON r2.movieId = mg2.movieId INNER JOIN genres g2 ON mg2.genreId = g2.genreId WHERE m.title=%s AND g.genreId = g2.genreId GROUP BY m.movieId;"
+    cur.execute(query2, (search_term_1,))
+    results2 = cur.fetchall()
+    cur.close()
+    
+    cur = mysql.connection.cursor()
+    query3 = "SELECT ROUND(AVG(r2.rating),3) AS other_movies_rating FROM ratings r INNER JOIN moviegenres mg ON r.movieId = mg.movieId INNER JOIN genres g ON mg.genreId = g.genreId INNER JOIN movies m ON mg.movieId = m.movieId INNER JOIN ratings r2 ON r.userId = r2.userId AND r.movieId != r2.movieId INNER JOIN moviegenres mg2 ON r2.movieId = mg2.movieId INNER JOIN genres g2 ON mg2.genreId = g2.genreId WHERE m.title=%s AND g.genreId = g2.genreId GROUP BY m.movieId;"
+    cur.execute(query3, (search_term_1,))
+    results3 = cur.fetchall()
+    cur.close()
+    
+    results = ''.join([str(x) for t in results for x in t])
+    results1 = ''.join([str(x) for t in results1 for x in t])
+    results2 = ''.join([str(x) for t in results2 for x in t])
+    results3 = ''.join([str(x) for t in results3 for x in t])
+    
+    x = ["All other films", search_term_1]
+    y = [float(results), float(results1)]
+    
+    if float(results) < float(results1):
+        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) higher than they vote all other films ({float(results)})."
+    else:
+        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) lower than they vote all other films ({float(results)})."
+    graph = generate_graph(x,y, search_term)
+    
+    if float(results2) < float(results3):
+        message1 = f"{search_term_1} ({float(results2)}) has been voted lower than other movies in the same genre as {search_term_1} ({float(results3)})."
+    else:
+        message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the same genre as {search_term_1} ({float(results3)})."
+
+    return render_template('viewerReactionPage1.html', graph=graph, message=message, message1=message1)
+
+@app.route('/viewerReactionPage2', methods=['POST'])
+def viewerReactionPage2():
+    # Get search term from the form
+    search_term = request.form['userid']
+    search_term_1 = request.form['moviename']
+    search_term_2 = request.form['genrename']
+    cur = mysql.connection.cursor()
+    query = "SELECT ROUND(AVG(ratings.rating),3) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND userId=%s GROUP BY userID;"
+    cur.execute(query, (search_term_2, search_term, ))
+    results = cur.fetchall()
+    cur.close()
+    
+    cur = mysql.connection.cursor()
+    query1 = "SELECT AVG(rating) FROM `ratings` JOIN movies ON ratings.movieId=movies.movieId WHERE movies.title=%s AND ratings.userId=%s GROUP BY userId;"
+    cur.execute(query1, (search_term_1,search_term,))
+    results1 = cur.fetchall()
+    cur.close()
+    
+    cur = mysql.connection.cursor()
+    query2 = "SELECT ROUND(AVG(r.rating),3) AS this_movie_rating FROM ratings r INNER JOIN moviegenres mg ON r.movieId = mg.movieId INNER JOIN genres g ON mg.genreId = g.genreId INNER JOIN movies m ON mg.movieId = m.movieId INNER JOIN ratings r2 ON r.userId = r2.userId AND r.movieId != r2.movieId INNER JOIN moviegenres mg2 ON r2.movieId = mg2.movieId INNER JOIN genres g2 ON mg2.genreId = g2.genreId WHERE m.title=%s AND g.genreId = g2.genreId AND g.type=%s GROUP BY m.movieId;"
+    cur.execute(query2, (search_term_1,search_term_2, ))
+    results2 = cur.fetchall()
+    cur.close()
+    
+    cur = mysql.connection.cursor()
+    query3 = "SELECT ROUND(AVG(r2.rating),3) AS other_movies_rating FROM ratings r INNER JOIN moviegenres mg ON r.movieId = mg.movieId INNER JOIN genres g ON mg.genreId = g.genreId INNER JOIN movies m ON mg.movieId = m.movieId INNER JOIN ratings r2 ON r.userId = r2.userId AND r.movieId != r2.movieId INNER JOIN moviegenres mg2 ON r2.movieId = mg2.movieId INNER JOIN genres g2 ON mg2.genreId = g2.genreId WHERE m.title=%s AND g.genreId = g2.genreId AND g.type=%s GROUP BY m.movieId;"
+    cur.execute(query3, (search_term_1,search_term_2, ))
+    results3 = cur.fetchall()
+    cur.close()
+    
+    results = ''.join([str(x) for t in results for x in t])
+    results1 = ''.join([str(x) for t in results1 for x in t])
+    results2 = ''.join([str(x) for t in results2 for x in t])
+    results3 = ''.join([str(x) for t in results3 for x in t])
+    
+    x = ["All other films", search_term_1]
+    y = [float(results), float(results1)]
+    # message=""
+    if float(results) < float(results1):
+        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) higher than they vote all other films in the {search_term_2} category ({float(results)})."
+    else:
+        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) lower than they vote all other films in the {search_term_2} category ({float(results)})."
+    graph = generate_graph(x,y, search_term)
+
+    if float(results2) < float(results3):
+        message1 = f"{search_term_1} ({float(results2)}) has been voted lower than other movies in the {search_term_2} genre ({float(results3)})."
+    else:
+        message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the {search_term_2} genre ({float(results3)})."
+
+    return render_template('viewerReactionPage2.html', graph=graph, message=message, message1=message1)
 
 @app.route('/search2')
 def search2():

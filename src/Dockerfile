@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
 
 
 RUN pip3 install flask-mysqldb
+RUN pip3 install matplotlib
 
 # copy the requirements file into the image
 COPY ./requirements.txt /app/requirements.txt
