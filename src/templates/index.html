@@ -2,20 +2,137 @@
 <html>
   <head>
     <title>SQL Data</title>
+    <link rel="stylesheet" href="../static/mainpage.css">
   </head>
   <body class="container">
-    <h1>Welcome to our SQL Database to do with Movies</h1>
 
-  <a href="movies">Link to Movies Page</a><br>
-  <a href="genres">Link to Genres Page</a><br>
-  <a href="links">Link to Links Page</a><br>
-  <a href="ratings">Link to Ratings Page</a><br>
-  <a href="tags">Link to Tags Page</a><br>
-  <a href="rotten_tomato_search">RottenTomato</a><br>
-  <a href="search_visual_browsing">Link to UserCase1 Page</a><br>
-  <a href="search2">Link to Prediction Page</a><br>
-  <a href="tag_analysis">Tag Analysis!</a><br>
-  <a href="analysisOnViewersReaction">Link to TestingPageForUserCase3 Page</a><br>
+  <!--First section-->
+  <div style="background-image: url('https://scoutlife.org/wp-content/uploads/2011/04/movies-featured.jpg?w=650');
+  background-size: cover; height:480px; padding-top: 80px; text-align: center;">
+        <h1 class="box" style="font-size:70px; color:white; margin-top: 150px;">Information System - MovieLens dataset</h1>
+  </div>
+
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">About</h2>
+  </div>
+  <div>
+    <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center; margin-bottom: 0px;">Are you a marketing professional in the movie industry?</p>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center; margin-top: 0px;">If so, then this information system is made for you! It uses the MovieLens dataset containing information about movies, ratings and tags of movies provided by viewers, etc. The purpose of this system is to help you analyse how viewers have responded to movies, to help you understand the market for movies you are planning and to help you understand the different kinds of viewers of movies and their varying preferences.</p>
+</div>
+<hr class="solid">
+<div class="row">
+  <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Browse the database</h2>
+</div>
+<div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center; margin-bottom: 0px;">Our database has the following tables which you can browse:</p>
+</div>
+<div style = "text-align: center;">
+  <button class ="button" onclick="window.location.href='movies';">
+    Movies
+  </button>
+  <button class ="button" onclick="window.location.href='genres';">
+    Genres
+  </button>
+  <button class ="button" onclick="window.location.href='links';">
+    Links
+  </button>
+  <button class ="button" onclick="window.location.href='ratings';">
+    Ratings
+  </button>
+  <button class ="button" onclick="window.location.href='tags';">
+    Tags
+  </button>
+  </div>
+<hr class="solid">
+</div>
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Browse the database and manipulate the listings</h2>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you want to browse the dataset by title and date and by genres and by ordered ratings?</p>
+</div>
+<div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you want to manipulate the visual listings? e.g. to find the most popular action movie since 1995 etc.</p>
+</div>
+<div style = "text-align: center;">
+  <button class ="button" onclick="window.location.href='search_visual_browsing';">
+    Click here
+  </button>
+</div>
+<hr class="solid">
+</div>
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Search for information on a specific film</h2>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you want to search for a film's content, date, director, lead actors and rottentomatoes rating?</p>
+  <div style = "text-align: center;">
+    <button class ="button" onclick="window.location.href='rotten_tomato_search';">
+      Click here
+    </button>
+</div>
+  <hr class="solid">
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Analyse viewers' reaction to a film</h2>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you want to analyse viewers' reactions to a film in relation to their rating history? e.g. did people who usually give low ratings give this film a low rating too?</p>
+</div>
+<div>
+    <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you want to analyse viewers' ratings to a film in relation to their rating history as well as genres? e.g. did people who usually give romom films high ratings give this film a high rating too?</p>
+  </div>
+  <div style = "text-align: center;">
+    <button class ="button" onclick="window.location.href='analysisOnViewersReaction';">
+      Click here
+    </button>
+</div>
+  <hr class="solid">
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Analyse tag data</h2>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you want to find out if the dataset can be segmented by tag data?</p>
+</div>
+<div>
+    <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Are you curious about the correlations between tags, genres and ratings?</p>
+  </div>
+  <div>
+    <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Do you viewers apply the same tags to different films and to different films in the same genre?</p>
+  </div>
+  <div style = "text-align: center;">
+    <button class ="button" onclick="window.location.href='tag_analysis';">
+      Click here
+    </button>
+</div>
+  <hr class="solid">
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Predict how a film will be rated</h2>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Predict how a film will be rated after release from the reactions of a small preview audience.</p>
+</div>
+<div>
+    <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">By taking a subset of viewers, can we predict aggregate ratings of a film by all the viewers in the dataset?</p>
+  </div>
+  <div style = "text-align: center;">
+    <button class ="button" onclick="window.location.href='search_pred';">
+      Click here
+    </button>
+    </div>
+  <hr class="solid">
+<div class="row">
+    <h2 class="heading" style="font-size:50px; color:black; margin:10px;text-align: center;">Use Case 6</h2>
+  </div>
+  <div>
+  <p class="heading" style="font-size:20px; color:black; margin:10px;text-align: center;">Describe Use Case 6</p>
+  <hr class="solid">
+</div>
+</div>
+</div>
+</div>
+</div>
 
   </body>
 </html>

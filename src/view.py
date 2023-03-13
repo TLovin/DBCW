@@ -274,9 +274,9 @@ def viewerReactionPage2():
 
     return render_template('viewerReactionPage2.html', graph=graph, message=message, message1=message1)
 
-@app.route('/search2')
+@app.route('/search_pred')
 def search2():
-    return render_template('search2.html')
+    return render_template('search_pred.html')
 
 
 @app.route('/task5', methods=['POST'])
