@@ -4,6 +4,7 @@ from flask_mysqldb import MySQL
 import matplotlib.pyplot as plt
 import io
 import base64
+from markupsafe import escape
 
 app = Flask(__name__)
 
@@ -105,7 +106,7 @@ def search():
 @app.route('/rotten_tomato_search_results', methods=['POST'])
 def search_results():
      # Get search term from the form
-    search_term = request.form['search']
+    search_term = escape(request.form['search'])
     cur = mysql.connection.cursor()
     # Execute the search query
     query = "SELECT m.* ,GROUP_CONCAT(DISTINCT d.name SEPARATOR ', ') AS directors,GROUP_CONCAT(DISTINCT w.name SEPARATOR ', ') AS writers, GROUP_CONCAT(DISTINCT c.name SEPARATOR ', ') AS cast FROM movie_db.rotten m JOIN movie_db.movie_director md ON m.movieId = md.movie_id JOIN movie_db.directors d ON md.director_id = d.id JOIN movie_db.movie_writer mw ON m.movieId = mw.movie_id JOIN movie_db.writers w ON mw.writer_id = w.id JOIN movie_db.movie_cast mc ON m.movieId = mc.movie_id JOIN movie_db.casts c ON mc.cast_id = c.id WHERE m.title =  %s"
@@ -121,8 +122,8 @@ def search_visual_browsing():
 @app.route('/search_visual_browsing_results', methods=['POST'])
 def search_visual_browsing_results():
     # Get search term from the form
-    search_term = request.form['search_1']
-    search_term_option = request.form['search_options']
+    search_term = escape(request.form['search_1'])
+    search_term_option = escape(request.form['search_options'])
     cur = mysql.connection.cursor()
     if search_term_option == "titledate":
         search_term_split = search_term.split(",")
@@ -139,9 +140,9 @@ def search_visual_browsing_results():
 
 @app.route('/mostleastpopularmovie', methods=['POST'])
 def mostleastpopularmovie():
-    genre_search_term = request.form['genresearch']
-    year_search_term = request.form['yearsearch']
-    search_term_option = request.form['mostleast']
+    genre_search_term = escape(request.form['genresearch'])
+    year_search_term = escape(request.form['yearsearch'])
+    search_term_option = escape(request.form['mostleast'])
     cur = mysql.connection.cursor()
     if search_term_option == "mostpopular":
         query = "SELECT COUNT(ratings.userId), movies.movieId, movies.title, movies.year, genres.type FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND movies.year >= %s GROUP BY movies.title ORDER BY COUNT(ratings.userId) DESC;"
@@ -177,8 +178,8 @@ def analysisOnViewersReaction():
 @app.route('/viewerReactionPage1', methods=['POST'])
 def viewerReactionPage1():
     # Get search term from the form
-    search_term = request.form['userid']
-    search_term_1 = request.form['moviename']
+    search_term = escape(request.form['userid'])
+    search_term_1 = escape(request.form['moviename'])
     cur = mysql.connection.cursor()
     query = "SELECT ROUND(AVG(rating),3) FROM `ratings` WHERE userId=%s;"
     cur.execute(query, (search_term,))
@@ -226,9 +227,9 @@ def viewerReactionPage1():
 @app.route('/viewerReactionPage2', methods=['POST'])
 def viewerReactionPage2():
     # Get search term from the form
-    search_term = request.form['userid']
-    search_term_1 = request.form['moviename']
-    search_term_2 = request.form['genrename']
+    search_term = escape(request.form['userid'])
+    search_term_1 =escape( request.form['moviename'])
+    search_term_2 = escape(request.form['genrename'])
     cur = mysql.connection.cursor()
     query = "SELECT ROUND(AVG(ratings.rating),3) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND userId=%s GROUP BY userID;"
     cur.execute(query, (search_term_2, search_term, ))
@@ -282,7 +283,7 @@ def search2():
 @app.route('/task5', methods=['POST'])
 def task5():
     # Get search term from the form
-    search_term = request.form['search']
+    search_term = escape(request.form['search'])
     cur = mysql.connection.cursor()
     # Execute the search query
     query1 = "SELECT AVG(rating) FROM (SELECT *, @counter := @counter +1 AS counter FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s ORDER BY movie_db.ratings.timestamp ASC) as list, (select @counter:=0) AS initvar) AS X where counter <= (ROUND(25/100 * (SELECT COUNT( DISTINCT userId, timestamp) as movies FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s))) ORDER BY X.timestamp ASC"
@@ -304,7 +305,7 @@ def tag_analysis():
 @app.route('/tag_analysis_results_by_genre', methods=['POST'])
 def tag_analysis_results_by_genre():
     # Get search term from the form
-    selected_genre = request.form['genre_option']
+    selected_genre = escape(request.form['genre_option'])
     cur = mysql.connection.cursor()
     query = '''WITH temp AS (
         SELECT lower(t.tag) as tag, g.`type` as genre
@@ -328,7 +329,7 @@ def tag_analysis_results_by_genre():
 
 @app.route('/tag_analysis_results_by_rating', methods=['POST'])
 def tag_analysis_results_by_rating():
-    num_tags = request.form['num_tags']
+    num_tags = escape(request.form['num_tags'])
     cur = mysql.connection.cursor()
     query = '''WITH temp AS (
         SELECT 
@@ -357,7 +358,7 @@ def tag_analysis_results_by_rating():
 
 @app.route('/tag_analysis_results_by_user', methods=['POST'])
 def tag_analysis_results_by_user():
-    selected_genre = request.form['selected_tag']
+    selected_genre = escape(request.form['selected_tag'])
     cur = mysql.connection.cursor()
     query = '''WITH temp as (
         SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
