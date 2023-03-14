@@ -4,6 +4,7 @@ from flask_mysqldb import MySQL
 import matplotlib.pyplot as plt
 import io
 import base64
+from markupsafe import escape
 
 app = Flask(__name__)
 
@@ -105,7 +106,7 @@ def search():
 @app.route('/rotten_tomato_search_results', methods=['POST'])
 def search_results():
      # Get search term from the form
-    search_term = request.form['search']
+    search_term = escape(request.form['search'])
     cur = mysql.connection.cursor()
     # Execute the search query
     query = "SELECT m.* ,GROUP_CONCAT(DISTINCT d.name SEPARATOR ', ') AS directors,GROUP_CONCAT(DISTINCT w.name SEPARATOR ', ') AS writers, GROUP_CONCAT(DISTINCT c.name SEPARATOR ', ') AS cast FROM movie_db.rotten m JOIN movie_db.movie_director md ON m.movieId = md.movie_id JOIN movie_db.directors d ON md.director_id = d.id JOIN movie_db.movie_writer mw ON m.movieId = mw.movie_id JOIN movie_db.writers w ON mw.writer_id = w.id JOIN movie_db.movie_cast mc ON m.movieId = mc.movie_id JOIN movie_db.casts c ON mc.cast_id = c.id WHERE m.title =  %s"
@@ -121,8 +122,8 @@ def search_visual_browsing():
 @app.route('/search_visual_browsing_results', methods=['POST'])
 def search_visual_browsing_results():
     # Get search term from the form
-    search_term = request.form['search_1']
-    search_term_option = request.form['search_options']
+    search_term = escape(request.form['search_1'])
+    search_term_option = escape(request.form['search_options'])
     cur = mysql.connection.cursor()
     if search_term_option == "titledate":
         search_term_split = search_term.split(",")
@@ -139,9 +140,9 @@ def search_visual_browsing_results():
 
 @app.route('/mostleastpopularmovie', methods=['POST'])
 def mostleastpopularmovie():
-    genre_search_term = request.form['genresearch']
-    year_search_term = request.form['yearsearch']
-    search_term_option = request.form['mostleast']
+    genre_search_term = escape(request.form['genresearch'])
+    year_search_term = escape(request.form['yearsearch'])
+    search_term_option = escape(request.form['mostleast'])
     cur = mysql.connection.cursor()
     if search_term_option == "mostpopular":
         query = "SELECT COUNT(ratings.userId), movies.movieId, movies.title, movies.year, genres.type FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND movies.year >= %s GROUP BY movies.title ORDER BY COUNT(ratings.userId) DESC;"
@@ -182,8 +183,8 @@ def analysisOnViewersReaction():
 @app.route('/viewerReactionPage1', methods=['POST'])
 def viewerReactionPage1():
     # Get search term from the form
-    search_term = request.form['userid']
-    search_term_1 = request.form['moviename']
+    search_term = escape(request.form['userid'])
+    search_term_1 = escape(request.form['moviename'])
     cur = mysql.connection.cursor()
     query = "SELECT ROUND(AVG(rating),3) FROM `ratings` WHERE userId=%s;"
     cur.execute(query, (search_term,))
@@ -231,9 +232,9 @@ def viewerReactionPage1():
 @app.route('/viewerReactionPage2', methods=['POST'])
 def viewerReactionPage2():
     # Get search term from the form
-    search_term = request.form['userid']
-    search_term_1 = request.form['moviename']
-    search_term_2 = request.form['genrename']
+    search_term = escape(request.form['userid'])
+    search_term_1 =escape( request.form['moviename'])
+    search_term_2 = escape(request.form['genrename'])
     cur = mysql.connection.cursor()
     query = "SELECT ROUND(AVG(ratings.rating),3) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s AND userId=%s GROUP BY userID;"
     cur.execute(query, (search_term_2, search_term, ))
@@ -279,7 +280,125 @@ def viewerReactionPage2():
 
     return render_template('viewerReactionPage2.html', graph=graph, message=message, message1=message1)
 
-##
+@app.route('/search_pred')
+def search2():
+    return render_template('search_pred.html')
+
+
+@app.route('/task5', methods=['POST'])
+def task5():
+    # Get search term from the form
+    search_term = escape(request.form['search'])
+    cur = mysql.connection.cursor()
+    # Execute the search query
+    query1 = "SELECT AVG(rating) FROM (SELECT *, @counter := @counter +1 AS counter FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s ORDER BY movie_db.ratings.timestamp ASC) as list, (select @counter:=0) AS initvar) AS X where counter <= (ROUND(25/100 * (SELECT COUNT( DISTINCT userId, timestamp) as movies FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s))) ORDER BY X.timestamp ASC"
+    query2 = "SELECT AVG(rating) FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s) as selected"
+    #cur.execute(f"SELECT * FROM rotten WHERE title = '{search_term}'")
+    cur.execute(query1, (search_term,search_term))
+    result1 = cur.fetchall() 
+    cur.execute(query2, (search_term,))
+    result2 = cur.fetchall()
+    results = [result1[0], result2[0]]
+    return render_template('task5.html', results=results)
+
+
+@app.route('/tag_analysis')
+def tag_analysis():
+    return render_template('tag_analysis.html')
+
+
+@app.route('/tag_analysis_results_by_genre', methods=['POST'])
+def tag_analysis_results_by_genre():
+    # Get search term from the form
+    selected_genre = escape(request.form['genre_option'])
+    cur = mysql.connection.cursor()
+    query = '''WITH temp AS (
+        SELECT lower(t.tag) as tag, g.`type` as genre
+        FROM movie_db.tags t
+        JOIN movie_db.moviegenres m
+        ON t.movieId = m.movieId
+        JOIN movie_db.genres g
+        ON m.genreId = g.genreId
+        ORDER BY 2, 1
+        )
+        SELECT tag, count(tag) as frequency
+        FROM temp
+        WHERE genre = %s
+        GROUP BY tag
+        ORDER BY 2 DESC, 1'''
+    cur.execute(query, (selected_genre,))
+    results = cur.fetchall()
+
+    return render_template('tag_analysis_results_by_genre.html', results=results, selected_genre=selected_genre)
+
+
+@app.route('/tag_analysis_results_by_rating', methods=['POST'])
+def tag_analysis_results_by_rating():
+    num_tags = escape(request.form['num_tags'])
+    cur = mysql.connection.cursor()
+    query = '''WITH temp AS (
+        SELECT 
+            lower(t.tag) AS tag, 
+            count(lower(t.tag)) AS `count`, 
+            r.rating
+        FROM tags t
+        left JOIN ratings r
+        ON t.movieId = r.movieId
+        GROUP BY 1, 3
+        ORDER BY rating DESC, `count` DESC
+        )
+        SELECT tag, `count`, rating
+        FROM 
+            (SELECT 
+            *, 
+            row_number() OVER (Partition BY rating ORDER BY `count` DESC) AS rnum
+            FROM temp) t
+        WHERE rnum <= %s
+        ORDER BY 3 DESC, 2 DESC'''
+    cur.execute(query, (num_tags,))
+    results = cur.fetchall()
+
+    return render_template('tag_analysis_results_by_rating.html', results=results, num_tags=num_tags)
+
+
+@app.route('/tag_analysis_results_by_user', methods=['POST'])
+def tag_analysis_results_by_user():
+    selected_genre = escape(request.form['selected_tag'])
+    cur = mysql.connection.cursor()
+    query = '''WITH temp as (
+        SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
+        FROM movie_db.tags 
+        GROUP BY lower(tag)  
+        ORDER BY cnt DESC
+        )
+        SELECT userId, lower(tags.tag) as tag, count(*) as `count`, cnt as `total count`
+        FROM tags
+        JOIN temp
+        ON tags.tag = temp.tag
+        WHERE temp.tag = %s
+        group by userId, lower(tag)
+        order by 3 DESC, 2'''
+
+    query_no_tag = '''WITH temp as (
+        SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
+        FROM movie_db.tags 
+        GROUP BY lower(tag)  
+        ORDER BY cnt DESC
+        )
+        SELECT userId, lower(tags.tag) as tag, count(*) as `count`, cnt as `total count`
+        FROM tags
+        JOIN temp
+        ON tags.tag = temp.tag
+        group by userId, lower(tag)
+        order by 3 DESC, 2'''
+    if selected_genre:
+        cur.execute(query, (selected_genre,))
+    else:
+        cur.execute(query_no_tag)
+    results = cur.fetchall()
+
+    return render_template('tag_analysis_results_by_user.html', results=results)
+
 @app.route('/personality_analysis')
 def personality_analysis():
     return render_template('personality_analysis.html')
@@ -288,7 +407,7 @@ def personality_analysis():
 @app.route('/personality_analysis_results_by_genre', methods=['POST'])
 def personality_analysis_results_by_genre():
     # Get search term from the form
-    selected_genre = request.form['genre_option']
+    selected_genre = escape(request.form['genre_option'])
     query_openness = '''SELECT openness, avg_rating
         FROM movie_db.personality_movie_analysis
         WHERE `type` = %s'''
@@ -347,126 +466,6 @@ def personality_analysis_results_by_genre():
     
     return render_template('personality_analysis_results_by_genre.html', graph_openness=graph_openness, graph_agreeableness=graph_agreeableness, graph_emotional_stability=graph_emotional_stability, graph_conscientiousness=graph_conscientiousness, graph_extraversion=graph_extraversion, selected_genre=selected_genre)
 
-##
-
-@app.route('/search_pred')
-def search2():
-    return render_template('search_pred.html')
-
-
-@app.route('/task5', methods=['POST'])
-def task5():
-    # Get search term from the form
-    search_term = request.form['search']
-    cur = mysql.connection.cursor()
-    # Execute the search query
-    query1 = "SELECT AVG(rating) FROM (SELECT *, @counter := @counter +1 AS counter FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s ORDER BY movie_db.ratings.timestamp ASC) as list, (select @counter:=0) AS initvar) AS X where counter <= (ROUND(25/100 * (SELECT COUNT( DISTINCT userId, timestamp) as movies FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s))) ORDER BY X.timestamp ASC"
-    query2 = "SELECT AVG(rating) FROM (SELECT DISTINCT userId, timestamp, rating FROM movie_db.ratings,movie_db.movies WHERE movie_db.ratings.movieId = movie_db.movies.movieId AND movie_db.movies.title = %s) as selected"
-    #cur.execute(f"SELECT * FROM rotten WHERE title = '{search_term}'")
-    cur.execute(query1, (search_term,search_term))
-    result1 = cur.fetchall() 
-    cur.execute(query2, (search_term,))
-    result2 = cur.fetchall()
-    results = [result1[0], result2[0]]
-    return render_template('task5.html', results=results)
-
-
-@app.route('/tag_analysis')
-def tag_analysis():
-    return render_template('tag_analysis.html')
-
-
-@app.route('/tag_analysis_results_by_genre', methods=['POST'])
-def tag_analysis_results_by_genre():
-    # Get search term from the form
-    selected_genre = request.form['genre_option']
-    cur = mysql.connection.cursor()
-    query = '''WITH temp AS (
-        SELECT lower(t.tag) as tag, g.`type` as genre
-        FROM movie_db.tags t
-        JOIN movie_db.moviegenres m
-        ON t.movieId = m.movieId
-        JOIN movie_db.genres g
-        ON m.genreId = g.genreId
-        ORDER BY 2, 1
-        )
-        SELECT tag, count(tag) as frequency
-        FROM temp
-        WHERE genre = %s
-        GROUP BY tag
-        ORDER BY 2 DESC, 1'''
-    cur.execute(query, (selected_genre,))
-    results = cur.fetchall()
-
-    return render_template('tag_analysis_results_by_genre.html', results=results, selected_genre=selected_genre)
-
-
-@app.route('/tag_analysis_results_by_rating', methods=['POST'])
-def tag_analysis_results_by_rating():
-    num_tags = request.form['num_tags']
-    cur = mysql.connection.cursor()
-    query = '''WITH temp AS (
-        SELECT 
-            lower(t.tag) AS tag, 
-            count(lower(t.tag)) AS `count`, 
-            r.rating
-        FROM tags t
-        left JOIN ratings r
-        ON t.movieId = r.movieId
-        GROUP BY 1, 3
-        ORDER BY rating DESC, `count` DESC
-        )
-        SELECT tag, `count`, rating
-        FROM 
-            (SELECT 
-            *, 
-            row_number() OVER (Partition BY rating ORDER BY `count` DESC) AS rnum
-            FROM temp) t
-        WHERE rnum <= %s
-        ORDER BY 3 DESC, 2 DESC'''
-    cur.execute(query, (num_tags,))
-    results = cur.fetchall()
-
-    return render_template('tag_analysis_results_by_rating.html', results=results, num_tags=num_tags)
-
-
-@app.route('/tag_analysis_results_by_user', methods=['POST'])
-def tag_analysis_results_by_user():
-    selected_genre = request.form['selected_tag']
-    cur = mysql.connection.cursor()
-    query = '''WITH temp as (
-        SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
-        FROM movie_db.tags 
-        GROUP BY lower(tag)  
-        ORDER BY cnt DESC
-        )
-        SELECT userId, lower(tags.tag) as tag, count(*) as `count`, cnt as `total count`
-        FROM tags
-        JOIN temp
-        ON tags.tag = temp.tag
-        WHERE temp.tag = %s
-        group by userId, lower(tag)
-        order by 3 DESC, 2'''
-
-    query_no_tag = '''WITH temp as (
-        SELECT lower(tag) as tag, count(lower(tag)) AS cnt 
-        FROM movie_db.tags 
-        GROUP BY lower(tag)  
-        ORDER BY cnt DESC
-        )
-        SELECT userId, lower(tags.tag) as tag, count(*) as `count`, cnt as `total count`
-        FROM tags
-        JOIN temp
-        ON tags.tag = temp.tag
-        group by userId, lower(tag)
-        order by 3 DESC, 2'''
-    if selected_genre:
-        cur.execute(query, (selected_genre,))
-    else:
-        cur.execute(query_no_tag)
-    results = cur.fetchall()
-
-    return render_template('tag_analysis_results_by_user.html', results=results)
 
 
 if __name__ == "__main__":
