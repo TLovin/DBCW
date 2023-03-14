@@ -152,12 +152,17 @@ def mostleastpopularmovie():
     results = cur.fetchall()
     return render_template('mostleastpopularmovie.html', results=results)
 
-def generate_graph(x,y,search_term):
-    plt.bar(x, y)
+def generate_graph(x, y, search_term=None, x_label=None, y_label='Rating', scatter=False):
+    plt.clf()
+    if scatter:
+        plt.scatter(x, y)
+    else:
+        plt.bar(x, y)
 
     # Add labels and title
-    plt.ylabel('Rating')
-    plt.title(f"Bar Chart, showing User {search_term} Rating History")
+    plt.ylabel(y_label)
+    plt.xlabel(x_label)
+    plt.title(f"Bar Chart, showing User {search_term} Rating History") if search_term else None
     
     # Save the figure to a buffer
     buffer = io.BytesIO()
@@ -273,6 +278,76 @@ def viewerReactionPage2():
         message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the {search_term_2} genre ({float(results3)})."
 
     return render_template('viewerReactionPage2.html', graph=graph, message=message, message1=message1)
+
+##
+@app.route('/personality_analysis')
+def personality_analysis():
+    return render_template('personality_analysis.html')
+
+
+@app.route('/personality_analysis_results_by_genre', methods=['POST'])
+def personality_analysis_results_by_genre():
+    # Get search term from the form
+    selected_genre = request.form['genre_option']
+    query_openness = '''SELECT openness, avg_rating
+        FROM movie_db.personality_movie_analysis
+        WHERE `type` = %s'''
+    query_agreeableness = '''SELECT agreeableness, avg_rating
+        FROM movie_db.personality_movie_analysis
+        WHERE `type` = %s'''
+    query_emotional_stability = '''SELECT emotional_stability, avg_rating
+        FROM movie_db.personality_movie_analysis
+        WHERE `type` = %s'''
+    query_conscientiousness = '''SELECT conscientiousness, avg_rating
+        FROM movie_db.personality_movie_analysis
+        WHERE `type` = %s'''
+    query_extraversion = '''SELECT extraversion, avg_rating
+        FROM movie_db.personality_movie_analysis
+        WHERE `type` = %s'''
+
+    cur = mysql.connection.cursor()
+    cur.execute(query_openness, (selected_genre,))
+    results_openness = cur.fetchall()
+    results_openness = list(map(list, zip(*results_openness)))
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(query_agreeableness, (selected_genre,))
+    results_agreeableness = cur.fetchall()
+    results_agreeableness = list(map(list, zip(*results_agreeableness)))
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(query_emotional_stability, (selected_genre,))
+    results_emotional_stability = cur.fetchall()
+    results_emotional_stability = list(map(list, zip(*results_emotional_stability)))
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(query_conscientiousness, (selected_genre,))
+    results_conscientiousness = cur.fetchall()
+    results_conscientiousness = list(map(list, zip(*results_conscientiousness)))
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(query_extraversion, (selected_genre,))
+    results_extraversion = cur.fetchall()
+    results_extraversion = list(map(list, zip(*results_extraversion)))
+    cur.close()
+
+    def intify(x):
+        x = x.strip()
+        return float(x)
+
+    graph_openness = generate_graph(list(map(intify, results_openness[0])), results_openness[1], search_term=None, x_label='Openness', y_label='Rating', scatter=True)
+    graph_agreeableness = generate_graph(list(map(intify, results_agreeableness[0])), results_agreeableness[1], search_term=None, x_label='Agreeableness', y_label='Rating', scatter=True)
+    graph_emotional_stability = generate_graph(list(map(intify, results_emotional_stability[0])), results_emotional_stability[1], search_term=None, x_label='Emotional Stability', y_label='Rating', scatter=True)
+    graph_conscientiousness = generate_graph(list(map(intify, results_conscientiousness[0])), results_conscientiousness[1], search_term=None, x_label='Conscientiousness', y_label='Rating', scatter=True)
+    graph_extraversion = generate_graph(list(map(intify, results_extraversion[0])), results_extraversion[1], search_term=None, x_label='Extraversion', y_label='Rating', scatter=True)
+    
+    return render_template('personality_analysis_results_by_genre.html', graph_openness=graph_openness, graph_agreeableness=graph_agreeableness, graph_emotional_stability=graph_emotional_stability, graph_conscientiousness=graph_conscientiousness, graph_extraversion=graph_extraversion, selected_genre=selected_genre)
+
+##
 
 @app.route('/search_pred')
 def search2():
