@@ -125,12 +125,32 @@ def search_visual_browsing_results():
     search_term = escape(request.form['search_1'])
     search_term_option = escape(request.form['search_options'])
     cur = mysql.connection.cursor()
-    if search_term_option == "titledate":
+    if search_term_option == "all":
         search_term_split = search_term.split(",")
-        query = "SELECT DISTINCT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.title=%s AND movies.year = %s GROUP BY genres.type"
+        if len(search_term_split)==1:
+            query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.title LIKE %s OR genres.type LIKE %s OR movies.year LIKE %s GROUP BY movies.movieId,movies.year, genres.type"
+            search_matching_pattern=f'%{search_term_split[0]}%'
+            cur.execute(query, (search_matching_pattern,search_matching_pattern,search_matching_pattern))
+        else:
+            if len(search_term_split)==2:
+                query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.title LIKE %s OR genres.type LIKE %s OR movies.year LIKE %s AND (movies.title LIKE %s OR genres.type LIKE %s OR movies.year LIKE %s) GROUP BY movies.movieId,movies.year, genres.type"
+                search_matching_pattern1=f'%{search_term_split[0]}%'
+                search_matching_pattern2=f'%{search_term_split[1]}%'
+                cur.execute(query, (search_matching_pattern1,search_matching_pattern1,search_matching_pattern1,search_matching_pattern2,search_matching_pattern2,search_matching_pattern2))
+
+            elif len(search_term_split)==3:
+                query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.title LIKE %s OR genres.type LIKE %s OR movies.year LIKE %s AND (movies.title LIKE %s OR genres.type LIKE %s OR movies.year LIKE %s) AND (movies.title LIKE %s OR genres.type LIKE %s OR movies.year LIKE %s) GROUP BY movies.movieId,movies.year, genres.type"
+                search_matching_pattern1=f'%{search_term_split[0]}%'
+                search_matching_pattern2=f'%{search_term_split[1]}%'
+                search_matching_pattern3=f'%{search_term_split[1]}%'
+                cur.execute(query, (search_matching_pattern1,search_matching_pattern1,search_matching_pattern1,search_matching_pattern2,search_matching_pattern2,search_matching_pattern2,search_matching_pattern3,search_matching_pattern3,search_matching_pattern3 ))
+
+    elif search_term_option == "titledate":
+        search_term_split = search_term.split(",")
+        query = "SELECT DISTINCT movies.movieId, movies.title, movies.year, GROUP_CONCAT(DISTINCT genres.type SEPARATOR ', '), AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.title=%s AND movies.year = %s GROUP BY genres.type"
         cur.execute(query, (search_term_split[0],search_term_split[1],))
     elif search_term_option == "year":
-        query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.year=%s GROUP BY movies.title"
+        query = "SELECT movies.movieId, movies.title, movies.year, GROUP_CONCAT(DISTINCT genres.type SEPARATOR ', '), AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE movies.year=%s GROUP BY movies.title"
         cur.execute(query, (search_term,))
     elif search_term_option == "genre":
         query = "SELECT movies.movieId, movies.title, movies.year, genres.type, AVG(ratings.rating) FROM movies JOIN moviegenres ON movies.movieId = moviegenres.movieId JOIN genres ON moviegenres.genreId = genres.genreId JOIN ratings on movies.movieId=ratings.movieId WHERE genres.type=%s GROUP BY movies.title"
