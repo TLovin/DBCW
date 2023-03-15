@@ -467,6 +467,33 @@ def personality_analysis_results_by_genre():
     return render_template('personality_analysis_results_by_genre.html', graph_openness=graph_openness, graph_agreeableness=graph_agreeableness, graph_emotional_stability=graph_emotional_stability, graph_conscientiousness=graph_conscientiousness, graph_extraversion=graph_extraversion, selected_genre=selected_genre)
 
 
+@app.route('/personality_analysis_results_by_trait', methods=['POST'])
+def personality_analysis_results_by_trait():
+    genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "IMAX", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
+    # Get search term from the form
+    personality_trait = escape(request.form['personality_trait'])
+    query = '''SELECT {column}, avg_rating
+        FROM movie_db.personality_movie_analysis
+        WHERE `type` = %s'''
+
+    def intify(x):
+        x = x.strip()
+        return float(x)
+
+    graphs = []
+    for g in genres:
+        cur = mysql.connection.cursor()
+        q = query.format(column=personality_trait)
+        cur.execute(q, (g,))
+        res = cur.fetchall()
+        res = list(map(list, zip(*res)))
+        cur.close()
+
+        graph = generate_graph(list(map(intify, res[0])), res[1], search_term=None, x_label=g, y_label='Rating', scatter=True)
+        graphs.append(graph)
+    
+    return render_template('personality_analysis_results_by_trait.html', graphs=graphs, personality_trait=personality_trait)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
