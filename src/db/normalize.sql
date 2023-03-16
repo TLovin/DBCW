@@ -1,7 +1,7 @@
 -- Create tables
-CREATE TABLE movie_db.moviegenres (
-  movieId INT NOT NULL,
-  genreId INT NOT NULL
+CREATE TABLE movie_db.users (
+  userId INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (userId)
 );
 
 CREATE TABLE movie_db.genres (
@@ -10,11 +10,14 @@ CREATE TABLE movie_db.genres (
   PRIMARY KEY (genreId)
 );
 
-CREATE TABLE movie_db.users (
-  userId INT NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (userId)
+CREATE TABLE movie_db.moviegenres (
+  movieId INT NOT NULL,
+  genreId INT NOT NULL,
+  FOREIGN KEY (movieId) REFERENCES movie_db.movies(movieId),
+  FOREIGN KEY (genreId) REFERENCES movie_db.genres(genreId)
 );
 
+-- Generate year column in movies table
 ALTER TABLE movie_db.movies
 ADD `year` INT;
 
@@ -26,8 +29,7 @@ SET `year` =
   END,
 title = TRIM(SUBSTRING_INDEX(title, '(', 1));
 
-#updating the title
-UPDATE  movie_db.movies 
+UPDATE movie_db.movies 
 SET title = LTRIM(CONCAT(SUBSTRING_INDEX(title, ',', -1), ' ', SUBSTRING_INDEX(title, ',', 1))) WHERE title LIKE '%,%';
 
 
@@ -39,6 +41,14 @@ FROM movie_db.ratings
 UNION 
 SELECT userId
 FROM movie_db.tags;
+
+-- Inforce foreign key dependencies after populating the users table
+ALTER TABLE movie_db.ratings
+ADD CONSTRAINT FOREIGN KEY (userId) REFERENCES movie_db.users(userId);
+
+ALTER TABLE movie_db.tags
+ADD CONSTRAINT FOREIGN KEY (userId) REFERENCES movie_db.users(userId);
+
 
 -- Genres
 INSERT INTO movie_db.genres (`type`)

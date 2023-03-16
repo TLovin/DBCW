@@ -1,10 +1,10 @@
 -- Integrate personality tables into the database
 ALTER TABLE movie_db.users
-ADD openness VARCHAR(255),
-ADD agreeableness VARCHAR(255),
-ADD emotional_stability VARCHAR(255),
-ADD conscientiousness VARCHAR(255),
-ADD extraversion VARCHAR(255),
+ADD openness FLOAT,
+ADD agreeableness FLOAT,
+ADD emotional_stability FLOAT,
+ADD conscientiousness FLOAT,
+ADD extraversion FLOAT,
 ADD personality_userId VARCHAR(255),
 ADD source VARCHAR(255);
 
@@ -16,8 +16,10 @@ SELECT *, 'Personality'
 FROM movie_db.user_personalities;
 
 INSERT INTO movie_db.ratings
-SELECT u.userId, movieId, rating, UNIX_TIMESTAMP(`timestamp`) as `timestamp`
+SELECT u.userId, m.movieId, rating, UNIX_TIMESTAMP(`timestamp`) as `timestamp`
 FROM movie_db.ratings_personality r
+INNER JOIN movie_db.movies m  -- to honor the foreign key
+ON r.movieId = m.movieId
 LEFT JOIN movie_db.users u
 ON r.userId = u.personality_userId;
 

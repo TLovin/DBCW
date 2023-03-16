@@ -474,15 +474,11 @@ def personality_analysis_results_by_genre():
     results_extraversion = list(map(list, zip(*results_extraversion)))
     cur.close()
 
-    def intify(x):
-        x = x.strip()
-        return float(x)
-
-    graph_openness = generate_graph(list(map(intify, results_openness[0])), results_openness[1], search_term=None, x_label='Openness', y_label='Rating', scatter=True)
-    graph_agreeableness = generate_graph(list(map(intify, results_agreeableness[0])), results_agreeableness[1], search_term=None, x_label='Agreeableness', y_label='Rating', scatter=True)
-    graph_emotional_stability = generate_graph(list(map(intify, results_emotional_stability[0])), results_emotional_stability[1], search_term=None, x_label='Emotional Stability', y_label='Rating', scatter=True)
-    graph_conscientiousness = generate_graph(list(map(intify, results_conscientiousness[0])), results_conscientiousness[1], search_term=None, x_label='Conscientiousness', y_label='Rating', scatter=True)
-    graph_extraversion = generate_graph(list(map(intify, results_extraversion[0])), results_extraversion[1], search_term=None, x_label='Extraversion', y_label='Rating', scatter=True)
+    graph_openness = generate_graph(results_openness[0], results_openness[1], search_term=None, x_label='Openness', y_label='Rating', scatter=True)
+    graph_agreeableness = generate_graph(results_agreeableness[0], results_agreeableness[1], search_term=None, x_label='Agreeableness', y_label='Rating', scatter=True)
+    graph_emotional_stability = generate_graph(results_emotional_stability[0], results_emotional_stability[1], search_term=None, x_label='Emotional Stability', y_label='Rating', scatter=True)
+    graph_conscientiousness = generate_graph(results_conscientiousness[0], results_conscientiousness[1], search_term=None, x_label='Conscientiousness', y_label='Rating', scatter=True)
+    graph_extraversion = generate_graph(results_extraversion[0], results_extraversion[1], search_term=None, x_label='Extraversion', y_label='Rating', scatter=True)
     
     return render_template('personality_analysis_results_by_genre.html', graph_openness=graph_openness, graph_agreeableness=graph_agreeableness, graph_emotional_stability=graph_emotional_stability, graph_conscientiousness=graph_conscientiousness, graph_extraversion=graph_extraversion, selected_genre=selected_genre)
 
@@ -496,10 +492,6 @@ def personality_analysis_results_by_trait():
         FROM movie_db.personality_movie_analysis
         WHERE `type` = %s'''
 
-    def intify(x):
-        x = x.strip()
-        return float(x)
-
     graphs = []
     for g in genres:
         cur = mysql.connection.cursor()
@@ -509,7 +501,7 @@ def personality_analysis_results_by_trait():
         res = list(map(list, zip(*res)))
         cur.close()
 
-        graph = generate_graph(list(map(intify, res[0])), res[1], search_term=None, x_label=g, y_label='Rating', scatter=True)
+        graph = generate_graph(res[0], res[1], search_term=None, x_label=g, y_label='Rating', scatter=True)
         graphs.append(graph)
     
     return render_template('personality_analysis_results_by_trait.html', graphs=graphs, personality_trait=personality_trait)
