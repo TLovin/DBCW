@@ -109,10 +109,10 @@ def search_results():
     search_term = escape(request.form['search'])
     cur = mysql.connection.cursor()
     # Execute the search query
-    query = "SELECT m.* ,GROUP_CONCAT(DISTINCT d.name SEPARATOR ', ') AS directors,GROUP_CONCAT(DISTINCT w.name SEPARATOR ', ') AS writers, GROUP_CONCAT(DISTINCT c.name SEPARATOR ', ') AS cast FROM movie_db.rotten m JOIN movie_db.movie_director md ON m.movieId = md.movie_id JOIN movie_db.directors d ON md.director_id = d.id JOIN movie_db.movie_writer mw ON m.movieId = mw.movie_id JOIN movie_db.writers w ON mw.writer_id = w.id JOIN movie_db.movie_cast mc ON m.movieId = mc.movie_id JOIN movie_db.casts c ON mc.cast_id = c.id WHERE m.title =  %s"
+    query = "SELECT mr.*, m.title,GROUP_CONCAT(DISTINCT d.name SEPARATOR ', ') AS directors,GROUP_CONCAT(DISTINCT w.name SEPARATOR ', ') AS writers, GROUP_CONCAT(DISTINCT c.name SEPARATOR ', ') AS cast FROM movie_db.rotten mr JOIN movie_db.movies m ON mr.movieId = m.movieId JOIN movie_db.movie_director md ON mr.movieId = md.movie_id JOIN movie_db.directors d ON md.director_id = d.id JOIN movie_db.movie_writer mw ON mr.movieId = mw.movie_id JOIN movie_db.writers w ON mw.writer_id = w.id JOIN movie_db.movie_cast mc ON mr.movieId = mc.movie_id JOIN movie_db.casts c ON mc.cast_id = c.id WHERE m.title = %s;"
     cur.execute(query, (search_term,))
     results = cur.fetchall()
-    movie_title, movieId, description, image,rating,director,writer,cast=results[0]
+    movieId, description, image,rating,movie_title,director,writer,cast=results[0]
     return render_template('rotten_tomato_search_results.html', movie_title=movie_title,description=description, image=image,director=director,writer=writer,cast=cast,rating=rating)
 
 @app.route('/search_visual_browsing')

@@ -1,7 +1,7 @@
 CREATE TEMPORARY TABLE movie_db.rottenTomatoRating(
     rotten_tomatoes_link VARCHAR(255) NOT NULL,
     movieTitle VARCHAR(255) NOT NULL,
-    movieInfo VARCHAR(255)  NOT NULL,
+    movieInfo VARCHAR(2550000)  NOT NULL,
     review TEXT NOT NULL,
     posterImage VARCHAR(255) NOT NULL,
     pgRating VARCHAR(255) NOT NULL,
@@ -15,7 +15,6 @@ CREATE TEMPORARY TABLE movie_db.rottenTomatoRating(
     studio_name VARCHAR(255) NOT NULL,
     tomatometer_status VARCHAR(255) NOT NULL,
     tomatometer_rating VARCHAR(255) NOT NULL
-
 );
 
 LOAD DATA INFILE '../../ml-latest-small/rotten.csv'
@@ -40,9 +39,19 @@ SET in_theaters_year= SUBSTRING_INDEX(in_theaters_year, '-', 1);
 
 
 CREATE TABLE movie_db.rotten
-SELECT DISTINCT  movie_db.movies.title,movie_db.movies.movieId, movie_db.rottenTomatoRating.movieInfo,movie_db.rottenTomatoRating.posterImage,movie_db.rottenTomatoRating.director,movie_db.rottenTomatoRating.writer,movie_db.rottenTomatoRating.cast1,movie_db.rottenTomatoRating.tomatometer_rating
-FROM movie_db.movies LEFT JOIN movie_db.rottenTomatoRating
+SELECT DISTINCT movie_db.movies.movieId, movie_db.rottenTomatoRating.movieInfo,movie_db.rottenTomatoRating.posterImage,movie_db.rottenTomatoRating.director,movie_db.rottenTomatoRating.writer,movie_db.rottenTomatoRating.cast1,movie_db.rottenTomatoRating.tomatometer_rating
+FROM movie_db.movies INNER JOIN movie_db.rottenTomatoRating
 ON movie_db.movies.title= movie_db.rottenTomatoRating.movieTitle AND movie_db.movies.year = movie_db.rottenTomatoRating.in_theaters_year;#LIKE CONCAT(movie_db.rottenTomatoRating.movieTitle,"%") #AND movie_db.movies.year LIKE CONCAT(movie_db.rottenTomatoRating.in_theaters_date,"%")
+
+ALTER TABLE movie_db.rotten
+ADD PRIMARY KEY (movieId);
+
+ALTER TABLE movie_db.rotten
+ADD CONSTRAINT fkID
+FOREIGN KEY (movieId)
+REFERENCES movie_db.movies(movieId);
+
+
 
 -- normalising the director column 
 CREATE TABLE movie_db.directors (
@@ -51,15 +60,16 @@ CREATE TABLE movie_db.directors (
 );
 
 CREATE TABLE movie_db.movie_director (
-  movie_id INT NOT NULL,
+  movie_id INT NOT NULL ,
   director_id INT NOT NULL
+  
 );
 ALTER TABLE movie_db.rotten ADD INDEX idx_director (director);
 ALTER TABLE movie_db.directors ADD INDEX idx_name (name);
 
 
 -- director table 
-INSERT INTO movie_db.directors (name)
+INSERT IGNORE INTO movie_db.directors (name)
 SELECT DISTINCT
   TRIM(REPLACE(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(m.director, ',', numbers.n), ',', -1), '\r\n', ''), '\n', ''), '\r', '')) AS director
 FROM
@@ -71,9 +81,9 @@ FROM
   INNER JOIN movie_db.rotten m
   ON CHAR_LENGTH(m.director) - CHAR_LENGTH(REPLACE(m.director, ',', '')) >= numbers.n - 1;
 -- movie director table 
-INSERT INTO movie_db.movie_director
+INSERT IGNORE INTO movie_db.movie_director
 WITH temp_movies AS (
-  SELECT 
+  SELECT DISTINCT
     movie_db.rotten.movieId as movieId,
     TRIM(REPLACE(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(rotten.director, ',', numbers.n), ',', -1), '\r\n', ''), '\n', ''), '\r', '')) director
   FROM
@@ -92,6 +102,18 @@ JOIN movie_db.directors ON directors.name = temp_movies.director;
 ALTER TABLE movie_db.rotten
 DROP director;
 
+ALTER TABLE movie_db.movie_director
+ADD PRIMARY KEY (movie_id,director_id);
+
+ALTER TABLE movie_db.movie_director
+ADD CONSTRAINT fk_movieID
+FOREIGN KEY (movie_id)
+REFERENCES movie_db.rotten(movieId),
+ADD CONSTRAINT fk_directorId
+FOREIGN KEY (director_id)
+REFERENCES movie_db.directors(id);
+
+
 
 -- normalising the writers column 
 CREATE TABLE movie_db.writers (
@@ -101,14 +123,15 @@ CREATE TABLE movie_db.writers (
 
 CREATE TABLE movie_db.movie_writer (
   movie_id INT NOT NULL,
-  writer_id INT NOT NULL
+  writer_id INT NOT NULL,
+  PRIMARY KEY (movie_id, writer_id)
 );
 ALTER TABLE movie_db.rotten ADD INDEX idx_writer (writer);
 ALTER TABLE movie_db.writers ADD INDEX idx_name (name);
 
 
 -- writer table 
-INSERT INTO movie_db.writers (name)
+INSERT IGNORE INTO movie_db.writers (name)
 SELECT DISTINCT
   TRIM(REPLACE(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(m.writer, ',', numbers.n), ',', -1), '\r\n', ''), '\n', ''), '\r', '')) AS writer
 FROM
@@ -120,7 +143,7 @@ FROM
   INNER JOIN movie_db.rotten m
   ON CHAR_LENGTH(m.writer) - CHAR_LENGTH(REPLACE(m.writer, ',', '')) >= numbers.n - 1;
 -- movie director table 
-INSERT INTO movie_db.movie_writer
+INSERT IGNORE INTO movie_db.movie_writer
 WITH temp_movies AS (
   SELECT 
     movie_db.rotten.movieId as movieId,
@@ -140,6 +163,13 @@ JOIN movie_db.writers ON writers.name = temp_movies.writer;
 
 ALTER TABLE movie_db.rotten
 DROP writer;
+ALTER TABLE movie_db.movie_writer
+ADD CONSTRAINT fk_mID
+FOREIGN KEY (movie_id)
+REFERENCES movie_db.rotten(movieId),
+ADD CONSTRAINT fk_writerId
+FOREIGN KEY (writer_id)
+REFERENCES movie_db.writers(id);
 
 
 -- normalising the cast column 
@@ -149,15 +179,16 @@ CREATE TABLE movie_db.casts (
 );
 
 CREATE TABLE movie_db.movie_cast (
-  movie_id INT NOT NULL,
+  movie_id INT NOT NULL ,
   cast_id INT NOT NULL
+  #
 );
 ALTER TABLE movie_db.rotten ADD INDEX idx_cast (cast1);
 ALTER TABLE movie_db.casts ADD INDEX idx_name (name);
 
 
 -- cast table 
-INSERT INTO movie_db.casts (name)
+INSERT IGNORE INTO movie_db.casts (name)
 SELECT DISTINCT
   TRIM(REPLACE(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(m.cast1, ',', numbers.n), ',', -1), '\r\n', ''), '\n', ''), '\r', '')) AS cast1
 FROM
@@ -169,9 +200,9 @@ FROM
   INNER JOIN movie_db.rotten m
   ON CHAR_LENGTH(m.cast1) - CHAR_LENGTH(REPLACE(m.cast1, ',', '')) >= numbers.n - 1;
 -- movie director table 
-INSERT INTO movie_db.movie_cast
+INSERT IGNORE INTO movie_db.movie_cast
 WITH temp_movies AS (
-  SELECT 
+  SELECT DISTINCT
     movie_db.rotten.movieId as movieId,
     TRIM(REPLACE(REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(rotten.cast1, ',', numbers.n), ',', -1), '\r\n', ''), '\n', ''), '\r', '')) cast1
   FROM
@@ -189,3 +220,14 @@ JOIN movie_db.casts ON casts.name = temp_movies.cast1;
 
 ALTER TABLE movie_db.rotten
 DROP cast1;
+
+ALTER TABLE movie_db.movie_cast
+ADD PRIMARY KEY (movie_id,cast_id);
+
+ALTER TABLE movie_db.movie_cast
+ADD CONSTRAINT fk_m_ID
+FOREIGN KEY (movie_id)
+REFERENCES movie_db.rotten(movieId),
+ADD CONSTRAINT fk_castId
+FOREIGN KEY (cast_id)
+REFERENCES movie_db.casts(id);
