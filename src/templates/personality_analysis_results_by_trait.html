@@ -20,11 +20,11 @@
 	</style>
   </head>
   <body class="container">
-    <h1>Personality Trait Analysis Against {{selected_genre}} Movies</h1>
-    <img src="data:image/png;base64,{{ graph_openness }}" />
-    <img src="data:image/png;base64,{{ graph_agreeableness }}" />
-    <img src="data:image/png;base64,{{ graph_emotional_stability }}" />
-    <img src="data:image/png;base64,{{ graph_conscientiousness }}" />
-    <img src="data:image/png;base64,{{ graph_extraversion }}" />
+    <h1>{{personality_trait}} Analysis Against Genres</h1>
+
+    {% for graph in graphs %}
+    <img src="data:image/png;base64,{{ graph }}" />
+    {%endfor%} -->
+
   </body>
 </html>

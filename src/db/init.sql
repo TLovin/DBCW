@@ -17,7 +17,8 @@ CREATE TABLE movie_db.ratings (
     movieId INT NOT NULL,
     rating FLOAT NOT NULL,
     `timestamp` INT NOT NULL,
-    PRIMARY KEY (userID, movieId)
+    PRIMARY KEY (userId, movieId),
+    FOREIGN KEY (movieId) REFERENCES movie_db.movies(movieId)
 );
 
 CREATE TABLE movie_db.tags (
@@ -25,16 +26,17 @@ CREATE TABLE movie_db.tags (
     movieId INT NOT NULL,
     tag VARCHAR(255) NOT NULL,
     `timestamp` INT NOT NULL,
-    PRIMARY KEY (userId, movieId, tag, `timestamp`)
+    PRIMARY KEY (userId, movieId, tag, `timestamp`),
+    FOREIGN KEY (movieId) REFERENCES movie_db.movies(movieId)
 );
 
 CREATE TABLE movie_db.user_personalities (
     userId VARCHAR(255) NOT NULL,
-    openness VARCHAR(255) NOT NULL,
-    agreeableness VARCHAR(255) NOT NULL,
-    emotional_stability VARCHAR(255) NOT NULL,
-    conscientiousness VARCHAR(255) NOT NULL,
-    extraversion VARCHAR(255) NOT NULL,
+    openness FLOAT NOT NULL,
+    agreeableness FLOAT NOT NULL,
+    emotional_stability FLOAT NOT NULL,
+    conscientiousness FLOAT NOT NULL,
+    extraversion FLOAT NOT NULL,
     PRIMARY KEY (userId)
 );
 

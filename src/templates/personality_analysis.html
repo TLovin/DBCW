@@ -6,7 +6,6 @@
   <body class="container">
     <h1>Personality Traits</h1>
     <h3>Is there any relationship between people's personality traits and their movie preferences? Select a genre to find out:</h3>
-    <p></p>
     <form action="/personality_analysis_results_by_genre" method="POST">
       <select name="genre_option" id="genre_option">
         <option value="Action">Action</option>
@@ -30,21 +29,19 @@
       </select>
       <button type="submit">Search</button>
     </form>
-<!-- <br>
-<br>
-    <h3>Get the top 10 tags for each rating!</h3>
-    <p>Curious about what tags are associated with higher ratings? Specify how many tags you want to see for each rating and click search!</p>
-    <form action="/tag_analysis_results_by_rating" method="POST">
-      <input type="int" name="num_tags">
+    <br>
+    <br>
+    <h3>Or select a personality trait to compare against genres:</h3>
+    <p></p>
+    <form action="/personality_analysis_results_by_trait" method="POST">
+      <select name="personality_trait" id="personality_trait">
+        <option value="openness">Openness</option>
+        <option value="agreeableness">Agreeableness</option>
+        <option value="emotional_stability">Emotional Stability</option>
+        <option value="conscientiousness">Conscientiousness</option>
+        <option value="extraversion">Extraversion</option>
+      </select>
       <button type="submit">Search</button>
     </form>
-<br>
-<br>
-    <h3>Relationships between tags and users?</h3>
-    <p>Click here to see if popular tags are used by multiple people or by the same person... or search by a specific tag:</p>
-    <form action="/tag_analysis_results_by_user" method="POST">
-      <input type="int" name="selected_tag">
-      <button type="submit">Search</button>
-    </form> -->
   </body>
 </html>
