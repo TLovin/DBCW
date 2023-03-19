@@ -232,20 +232,26 @@ def viewerReactionPage1():
     results1 = ''.join([str(x) for t in results1 for x in t])
     results2 = ''.join([str(x) for t in results2 for x in t])
     results3 = ''.join([str(x) for t in results3 for x in t])
-    
-    x = ["All other films", search_term_1]
-    y = [float(results), float(results1)]
-    
-    if float(results) < float(results1):
-        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) higher than they vote all other films ({float(results)})."
+    graph=None
+    message=None
+    message1=None
+    if results2=='' or results3=='' or results=='' or results1=='':
+        message="No results found"
+        message1="Try again!"
     else:
-        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) lower than they vote all other films ({float(results)})."
-    graph = generate_graph(x,y, search_term)
-    
-    if float(results2) < float(results3):
-        message1 = f"{search_term_1} ({float(results2)}) has been voted lower than other movies in the same genre as {search_term_1} ({float(results3)})."
-    else:
-        message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the same genre as {search_term_1} ({float(results3)})."
+        x = ["All other films", search_term_1]
+        y = [float(results), float(results1)]
+        
+        if float(results) < float(results1):
+            message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) higher than they vote all other films ({float(results)})."
+        else:
+            message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) lower than they vote all other films ({float(results)})."
+        graph = generate_graph(x,y, search_term)
+        
+        if float(results2) < float(results3):
+            message1 = f"{search_term_1} ({float(results2)}) has been voted lower than other movies in the same genre as {search_term_1} ({float(results3)})."
+        else:
+            message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the same genre as {search_term_1} ({float(results3)})."
 
     return render_template('viewerReactionPage1.html', graph=graph, message=message, message1=message1)
 
@@ -284,19 +290,27 @@ def viewerReactionPage2():
     results2 = ''.join([str(x) for t in results2 for x in t])
     results3 = ''.join([str(x) for t in results3 for x in t])
     
-    x = ["All other films", search_term_1]
-    y = [float(results), float(results1)]
-    # message=""
-    if float(results) < float(results1):
-        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) higher than they vote all other films in the {search_term_2} category ({float(results)})."
+    graph=None
+    message=None
+    message1=None
+    if results2=='' or results3=='' or results=='' or results1=='':
+        message="No results found"
+        message1="Try again!"
     else:
-        message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) lower than they vote all other films in the {search_term_2} category ({float(results)})."
-    graph = generate_graph(x,y, search_term)
+        x = ["All other films", search_term_1]
+        y = [float(results), float(results1)]
+        # message=""
+        if float(results) < float(results1):
+            message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) higher than they vote all other films in the {search_term_2} category ({float(results)})."
+        else:
+            message = f"As can be seen, User {search_term} has voted {search_term_1} ({float(results1)}) lower than they vote all other films in the {search_term_2} category ({float(results)})."
+        graph = generate_graph(x,y, search_term)
 
-    if float(results2) < float(results3):
-        message1 = f"{search_term_1} ({float(results2)}) has been voted lower than other movies in the {search_term_2} genre ({float(results3)})."
-    else:
-        message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the {search_term_2} genre ({float(results3)})."
+        if float(results2) < float(results3):
+            message1 = f"{search_term_1} ({float(results2)}) has been voted lower than other movies in the {search_term_2} genre ({float(results3)})."
+        else:
+            message1 = f"{search_term_1} ({float(results2)}) has been voted higher than other movies in the {search_term_2} genre ({float(results3)})."
+
 
     return render_template('viewerReactionPage2.html', graph=graph, message=message, message1=message1)
 
