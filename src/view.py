@@ -176,7 +176,7 @@ def mostleastpopularmovie():
 def generate_graph(x, y, search_term=None, x_label=None, y_label='Rating', scatter=False):
     plt.clf()
     if scatter:
-        plt.scatter(x, y)
+        plt.scatter(x, y, alpha=0.1)
     else:
         plt.bar(x, y)
 
