@@ -2,28 +2,40 @@
 <html>
   <head>
     <title>Search Results</title>
-    <link rel="stylesheet" href="../static/task5.css">
   </head>
-  <div class="header">
-    <h1>Predicting how a film will be rated</h1>
-    <div class="header2">
-      <h2>Rating of first 25% of viewers of the movie</h2>
+  <body class="container" style = "text-align: center;">
+    <h1 class = "h1" style ="color:maroon">Predicting how a film will be rated</h1>
+    <div class="header"style=" padding-top: 80px; text-align: center; padding-bottom: 80px;" >
+      <h2>Rating of first 10% of viewers of the movie</h2>
+          <body>
+            {% if results %}
+              <ul>
+                {{results[0][0]}}
+              </ul>
+            {% else %}
+              <p>No results found.</p>
+            {% endif %}
+          </body>
+      </div>
+      <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+  <div class="header"style=" padding-top: 80px; text-align: center; padding-bottom: 80px;" >
+    <h2>Rating of first 25% of viewers of the movie</h2>
         <body>
           {% if results %}
             <ul>
-              {{results[0]}}
+              {{results[1][0]}}
             </ul>
           {% else %}
             <p>No results found.</p>
           {% endif %}
         </body>
-  </div>
-  <div class="header3">
-    <h2>Aggregate rating of all viewers of the movie</h2>
+    </div>
+    <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+    <div class="header"style=" padding-top: 80px; text-align: center; padding-bottom: 80px;" >    <h2>Aggregate rating of all viewers of the movie</h2>
       <body>
         {% if results %}
           <ul>
-            {{results[1]}}
+            {{results[2][0]}}
           </ul>
         {% else %}
           <p>No results found.</p>
@@ -31,5 +43,6 @@
       </body>
 </div>
   </div>
-  
+  <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+  </body>
 </html>

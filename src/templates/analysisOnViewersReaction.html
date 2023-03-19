@@ -3,25 +3,29 @@
   <head>
     <title>SQL Data</title>
   </head>
-  <body class="container">
-    <h1>Welcome to our SQL Database to do with Movies</h1>
-    <h3>Analysis of viewer reaction to a film in relation to their rating history:</h3>
-    <p>Please enter the UserId of the User you want to view and the Movie Name.</p>
-    <form action="/viewerReactionPage1" method="POST">
-      <input type="text" name="userid" placeholder="User ID">
-      <input type="text" name="moviename" placeholder="Movie Name">
-      <button type="submit">Search</button>
-    </form>
-
-    <br>
-    <br>
-    <h3>Analysis of viewer ratings by ratings history and genres</h3>
-    <p>Please enter the UserId of the User you want to view, the Movie Name and the genre.</p>
+  <body class="container" style="text-align: center;">
+    <div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+      <h1 class ="h1" style= "color:maroon">Analyse viewer reaction to a film in relation to their rating history</h1>
+      <h2>Please enter the UserId of the user who's rating history you want to analyse and the Movie Name for which you want to analyse that user's reaction.</h2>
+      <h2>e.g. User ID: 1 and Movie Name: toy story will analyse user with UserID 1's reaction for toy story compared to their rating history.</h2>
+      <form action="/viewerReactionPage1" method="POST">
+        <input type="text" name="userid" placeholder="User ID" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+        <input type="text" name="moviename" placeholder="Movie Name" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+        <button class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
+      </form>
+  </div>
+  <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+  <div style=" padding-top: 80px; text-align: center;padding-bottom: 80px;">
+    <h1 class ="h1" style= "color:maroon">Analyse viewer ratings by rating history and genres</h1>
+    <h2>Please enter the UserId of the User who's rating history you want to analyse, the genre for which you want to analyse the user's rating history and the Movie Name for which you want to analyse that user's reaction.</h2>
+    <h2>e.g. User ID: 1, Genre: fantasy and Movie Name: toy story will analyse user with UserID 1's reaction for toy story compared to their rating history in the fantasy genre.</h2>
     <form action="/viewerReactionPage2" method="POST">
-      <input type="text" name="userid" placeholder="User ID">
-      <input type="text" name="moviename" placeholder="Movie Name">
-      <input type="text" name="genrename" placeholder="Genre">
-      <button type="submit">Search</button>
+      <input type="text" name="userid" placeholder="User ID" style = "width: 20%;height: fit-content; font-size: medium;">
+      <input type="text" name="genrename" placeholder="Genre" style = "width: 20%;height: fit-content; font-size: medium;">
+      <input type="text" name="moviename" placeholder="Movie Name" style = "width: 20%;height: fit-content; font-size: medium;">
+      <button class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
+    </div>
+    <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;margin-bottom: 50px;">
   </body>
 </html>

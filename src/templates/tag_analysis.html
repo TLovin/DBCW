@@ -3,12 +3,14 @@
   <head>
     <title>Title</title>
   </head>
-  <body class="container">
-    <h1>Tag Data Insights!</h1>
-    <h3>Pick a genre to see what tags are most often associated with it!</h3>
+  <body class="container" style = "text-align: center;">
+    <h1 class = "h1" style ="color:maroon">Tag Data Insights</h1>
+    <div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+    <h2>Pick a genre from the drop down to see what tags are most often associated with it</h2>
+    <h3>e.g. Action, Children, Comedy</h3>
     <p></p>
     <form action="/tag_analysis_results_by_genre" method="POST">
-      <select name="genre_option" id="genre_option">
+      <select name="genre_option" id="genre_option" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
         <option value="Action">Action</option>
         <option value="Adventure">Adventure</option>
         <option value="Animation">Animation</option>
@@ -28,23 +30,28 @@
         <option value="War">War</option>
         <option value="Western">Western</option>
       </select>
-      <button type="submit">Search</button>
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
-<br>
-<br>
-    <h3>Get the top 10 tags for each rating!</h3>
-    <p>Curious about what tags are associated with higher ratings? Specify how many tags you want to see for each rating and click search!</p>
+</div>
+<hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+<div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+<h2>Get the top tags for each rating</h2>
+    <h3>Curious about what tags are associated with higher ratings? Specify how many tags you want to see for each rating and click search!</h3>
+    <h3>e.g. 3 would display the top 3 tags for each rating</h3>
     <form action="/tag_analysis_results_by_rating" method="POST">
-      <input type="int" name="num_tags">
-      <button type="submit">Search</button>
+      <input type="int" name="num_tags"class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
-<br>
-<br>
-    <h3>Relationships between tags and users?</h3>
-    <p>Click here to see if popular tags are used by multiple people or by the same person... or search by a specific tag:</p>
+</div>
+<hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+<div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+  <h2>Explore the relationships between tags and users</h2>
+    <h3>Click here to see if popular tags are used by multiple people or by the same person (just click search)... or search by a specific tag by typing it in e.g. action, fantasy etc</h3>
     <form action="/tag_analysis_results_by_user" method="POST">
-      <input type="int" name="selected_tag">
-      <button type="submit">Search</button>
+      <input type="int" name="selected_tag"class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
+  </div>
+  <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
   </body>
 </html>

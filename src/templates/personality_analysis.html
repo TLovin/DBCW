@@ -3,11 +3,13 @@
   <head>
     <title>Title</title>
   </head>
-  <body class="container">
-    <h1>Personality Traits</h1>
-    <h3>Is there any relationship between people's personality traits and their movie preferences? Select a genre to find out:</h3>
+  <body class="container" style = "text-align: center;">
+    <h1 class = "h1" style ="color:maroon">Personality Traits Insights</h1>
+    <div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+    <h2>Is there any relationship between people's personality traits and their movie preferences? Select a genre from the drop down to find out</h2>
+    <h3>e.g. Action, Comedy, Adventure etc</h3>
     <form action="/personality_analysis_results_by_genre" method="POST">
-      <select name="genre_option" id="genre_option">
+      <select name="genre_option" id="genre_option" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
         <option value="Action">Action</option>
         <option value="Adventure">Adventure</option>
         <option value="Animation">Animation</option>
@@ -27,21 +29,24 @@
         <option value="War">War</option>
         <option value="Western">Western</option>
       </select>
-      <button type="submit">Search</button>
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
-    <br>
-    <br>
-    <h3>Or select a personality trait to compare against genres:</h3>
-    <p></p>
+  </div>
+  <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+  <div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+    <h2>Select a personality trait from the drop down to compare against genres</h2>
+    <h3>e.g. Openness, Extraversion etc</h3>
     <form action="/personality_analysis_results_by_trait" method="POST">
-      <select name="personality_trait" id="personality_trait">
+      <select name="personality_trait" id="personality_trait" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
         <option value="openness">Openness</option>
         <option value="agreeableness">Agreeableness</option>
         <option value="emotional_stability">Emotional Stability</option>
         <option value="conscientiousness">Conscientiousness</option>
         <option value="extraversion">Extraversion</option>
       </select>
-      <button type="submit">Search</button>
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
+  </div>
+  <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
   </body>
 </html>

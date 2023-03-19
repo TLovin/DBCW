@@ -3,36 +3,41 @@
   <head>
     <title>SQL Data</title>
   </head>
-  <body class="container">
-    <h1>Welcome to our SQL Database to do with Movies</h1>
-    <h3>Searching for Title+Date or Genre:</h3>
-    <p>If you want to search by Title+Date, then type the title of the movie then a "," and then the year of the movie and then select "Title+Year" from the drop down.</p>
-    <p>If you want to search by Year, then type in the year to search for and then select "Year" from the drop down.</p>
-    <p>If you want to search by Genre, then type in the genre to search for and then select "Genre" from the drop down.</p>
+  <body class="container" style="text-align: center;">
+    <div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+      <h1 class ="h1" style= "color:maroon">Search for films by Title+Date or Genre</h1>
+      <h2>If you want to search by Title+Date, then type the title of the movie followed by a "," and then the year of the movie and then select "Title+Year" from the drop down.</h2>
+      <h2>e.g. toy story, 1995</h2>
+      <h2>If you want to search by Year, then type in the year to search for and then select "Year" from the drop down.</h2>
+      <h2>e.g 1995</h2>
+      <h2>If you want to search by Genre, then type in the genre to search for and then select "Genre" from the drop down.</h2>
+      <h2>e.g action</h2>
+      <h2>If you want to search for something through all the fields, type it in and then select "All the fields" from the drop down.</h2>
     <form action="/search_visual_browsing_results" method="POST">
-      <input type="text" name="search_1">
-      <select name="search_options" id="search_options">
+      <input type="text" name="search_1" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+      <select name="search_options" id="search_options" class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
         <option value="all" selected>All the fields</option>
         <option value="titledate">Title+Year</option>
         <option value="year">Year</option>
         <option value="genre">Genre</option>
       </select>
-      <button type="submit">Search</button>
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
-<br>
-<br>
-    <h3>Finding Most/Least Popular Movie:</h3>
-    <p>Please type in the Genre, Year and whether you want to see most/least popular movies from the drop down.</p>
-    <form action="/search_results_2" method="POST">
-      <label for="genresearch">Genre:</label>
-      <input type="text" name="genresearch">
-      <label for="yearsearch">Year:</label>
-      <input type="text" name="yearsearch">
-      <select name="mostleast" id="mostleast">
+    </div>
+    <hr class="solid" style ="border-top: 3px solid #bbb;margin-left:100px;margin-right:100px;margin-top: 50px;">
+    <div style=" padding-top: 80px; text-align: center; padding-bottom: 80px;">
+      <h1 class ="h1" style= "color:maroon">Find Most/Least Popular Movies</h1>
+    <h2>Please type in the Genre, Year and whether you want to see most/least popular movies from the drop down.</h2>
+    <h2>e.g. Genre: action and Year: 1995</h2>
+    <form action="/mostleastpopularmovie" method="POST">
+      <input type="text" placeholder="Genre" name="genresearch"class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+      <input type="text" placeholder="Year" name="yearsearch"class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
+      <select name="mostleast" id="mostleast"class = "box" style = "width: 20%;height: fit-content; font-size: medium;">
         <option value="mostpopular">Most Popular</option>
         <option value="leastpopular">Least Popular</option>
       </select>
-      <button type="submit">Search</button>
+      <button type="submit"class = "button" style = "background-image: linear-gradient(92.88deg, #800000 9.16%, #710000 43.89%, #620000 64.72%); width: 20%;height: fit-content; font-size: medium; color: #FFFFFF;"type="submit">Search</button>
     </form>
+    </div>
   </body>
 </html>
