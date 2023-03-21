@@ -261,3 +261,74 @@
 2023/03/19 17:48:05 [notice] 1#1: start worker process 30
 2023/03/19 17:48:05 [notice] 1#1: start worker process 31
 2023/03/19 17:48:05 [notice] 1#1: start worker process 32
+2023/03/19 18:11:38 [notice] 1#1: using the "epoll" event method
+2023/03/19 18:11:38 [notice] 1#1: nginx/1.23.3
+2023/03/19 18:11:38 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+2023/03/19 18:11:38 [notice] 1#1: OS: Linux 5.10.76-linuxkit
+2023/03/19 18:11:38 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/03/19 18:11:38 [notice] 1#1: start worker processes
+2023/03/19 18:11:38 [notice] 1#1: start worker process 29
+2023/03/19 18:11:38 [notice] 1#1: start worker process 30
+2023/03/19 18:11:38 [notice] 1#1: start worker process 31
+2023/03/19 18:11:38 [notice] 1#1: start worker process 32
+2023/03/20 16:18:18 [notice] 1#1: using the "epoll" event method
+2023/03/20 16:18:18 [notice] 1#1: nginx/1.23.3
+2023/03/20 16:18:18 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+2023/03/20 16:18:18 [notice] 1#1: OS: Linux 5.10.76-linuxkit
+2023/03/20 16:18:18 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/03/20 16:18:18 [notice] 1#1: start worker processes
+2023/03/20 16:18:18 [notice] 1#1: start worker process 29
+2023/03/20 16:18:18 [notice] 1#1: start worker process 30
+2023/03/20 16:18:18 [notice] 1#1: start worker process 31
+2023/03/20 16:18:18 [notice] 1#1: start worker process 32
+2023/03/20 16:45:23 [notice] 1#1: using the "epoll" event method
+2023/03/20 16:45:23 [notice] 1#1: nginx/1.23.3
+2023/03/20 16:45:23 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+2023/03/20 16:45:23 [notice] 1#1: OS: Linux 5.10.76-linuxkit
+2023/03/20 16:45:23 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/03/20 16:45:23 [notice] 1#1: start worker processes
+2023/03/20 16:45:23 [notice] 1#1: start worker process 30
+2023/03/20 16:45:23 [notice] 1#1: start worker process 31
+2023/03/20 16:45:23 [notice] 1#1: start worker process 32
+2023/03/20 16:45:23 [notice] 1#1: start worker process 33
+2023/03/20 18:07:54 [notice] 1#1: signal 15 (SIGTERM) received, exiting
+2023/03/20 18:07:54 [notice] 30#30: signal 15 (SIGTERM) received, exiting
+2023/03/20 18:07:54 [notice] 30#30: exiting
+2023/03/20 18:07:54 [notice] 31#31: signal 15 (SIGTERM) received, exiting
+2023/03/20 18:07:54 [notice] 32#32: signal 15 (SIGTERM) received, exiting
+2023/03/20 18:07:54 [notice] 33#33: signal 15 (SIGTERM) received, exiting
+2023/03/20 18:07:54 [notice] 33#33: exiting
+2023/03/20 18:07:54 [notice] 31#31: exiting
+2023/03/20 18:07:54 [notice] 32#32: exiting
+2023/03/20 18:07:54 [notice] 30#30: exit
+2023/03/20 18:07:54 [notice] 33#33: exit
+2023/03/20 18:07:54 [notice] 31#31: exit
+2023/03/20 18:07:54 [notice] 32#32: exit
+2023/03/20 18:07:54 [notice] 1#1: signal 14 (SIGALRM) received
+2023/03/20 18:09:26 [notice] 1#1: using the "epoll" event method
+2023/03/20 18:09:26 [notice] 1#1: nginx/1.23.3
+2023/03/20 18:09:26 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+2023/03/20 18:09:26 [notice] 1#1: OS: Linux 5.10.76-linuxkit
+2023/03/20 18:09:26 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/03/20 18:09:26 [notice] 1#1: start worker processes
+2023/03/20 18:09:26 [notice] 1#1: start worker process 29
+2023/03/20 18:09:26 [notice] 1#1: start worker process 30
+2023/03/20 18:09:26 [notice] 1#1: start worker process 31
+2023/03/20 18:09:26 [notice] 1#1: start worker process 32
+2023/03/20 18:09:26 [notice] 1#1: start worker process 33
+2023/03/20 18:09:26 [notice] 1#1: start worker process 34
+2023/03/20 18:09:26 [notice] 1#1: start worker process 35
+2023/03/21 16:39:05 [error] 30#30: *3 open() "/var/www/html/favicon.ico" failed (2: No such file or directory), client: 172.19.0.1, server: , request: "GET /favicon.ico HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/"
+2023/03/21 16:57:47 [notice] 1#1: using the "epoll" event method
+2023/03/21 16:57:47 [notice] 1#1: nginx/1.23.3
+2023/03/21 16:57:47 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+2023/03/21 16:57:47 [notice] 1#1: OS: Linux 5.10.76-linuxkit
+2023/03/21 16:57:47 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/03/21 16:57:47 [notice] 1#1: start worker processes
+2023/03/21 16:57:47 [notice] 1#1: start worker process 30
+2023/03/21 16:57:47 [notice] 1#1: start worker process 31
+2023/03/21 16:57:47 [notice] 1#1: start worker process 32
+2023/03/21 16:57:47 [notice] 1#1: start worker process 33
+2023/03/21 16:57:47 [notice] 1#1: start worker process 34
+2023/03/21 16:57:47 [notice] 1#1: start worker process 35
+2023/03/21 16:57:47 [notice] 1#1: start worker process 36
