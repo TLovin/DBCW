@@ -27,8 +27,8 @@ services:
     environment:
       MYSQL_DATABASE: movie_db
       MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: M1o2v3i4e5s6!
+      MYSQL_ROOT_PASSWORD: M1o2v3i4e5s6!
     volumes:
       - ./db:/docker-entrypoint-initdb.d  # sql code does in ./db
       - ../my.cnf:/etc/mysql/my.cnf:ro
@@ -59,7 +59,7 @@ services:
     environment:  # not sure what these vars are
       PMA_HOST: db
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: M1o2v3i4e5s6!
     links:
         - db
 volumes:

@@ -451,7 +451,7 @@ def personality_analysis_results_by_genre():
     query_agreeableness = '''SELECT agreeableness, avg_rating
         FROM movie_db.personality_movie_analysis
         WHERE `type` = %s'''
-    query_emotional_stability = '''SELECT emotional_stability, avg_rating
+    query_emotional_stability = '''SELEC T emotional_stability, avg_rating
         FROM movie_db.personality_movie_analysis
         WHERE `type` = %s'''
     query_conscientiousness = '''SELECT conscientiousness, avg_rating
